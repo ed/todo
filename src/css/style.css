@@ -1,0 +1,10 @@
+.parent{ 
+    position:relative;
+}
+
+.task-section{
+    position: absolute;
+    left:50%;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+}
