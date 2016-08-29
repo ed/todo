@@ -12,9 +12,9 @@ class Todo extends Component {
             <li className="todo-list-item">
             <h2 className="todo-name">{todo.name}</h2>
             <br></br>
-            <div className="todo-due-date"> {todo.dateDue}</div>
+            <div className="todo-due-date"> {todo.dueDate}</div>
             <br></br>
-            <div className="todo-priority">{todo.priority}</div>
+            <div className="todo-priority">{todo.prio}</div>
             <br></br>
             <div className="todo-tags"> {todo.tags}</div>
             </li>
