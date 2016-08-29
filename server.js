@@ -13,10 +13,6 @@ let http = require('http').createServer(function(req, res) {
 var io = require('socket.io').listen(http);
 
 io.on('connection', function(socket){ 
-    socket.on('load', function(hash) {
-        socket.join(hash)
-        socket.emit('load');
-    });
     socket.on('new task', function(obj) {
         socket.broadcast.emit('update add', obj);
     });

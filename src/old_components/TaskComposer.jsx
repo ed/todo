@@ -4,6 +4,11 @@ import TaskUtils from 'utils/TaskUtils';
 
 class TaskComposer extends Component {
 
+    propTypes: {
+        channel: React.PropTypes.string.isRequired,
+    }
+
+
     constructor(props) {
         super(props);
         this._onSubmit=this._onSubmit.bind(this);
@@ -12,6 +17,7 @@ class TaskComposer extends Component {
             name: '',
             dueDate: '',
             tags: '',
+            prio: '',
             drawing: '',
             assigned: '',
             subTasks: '' 
@@ -68,6 +74,13 @@ class TaskComposer extends Component {
                     onChange={this._onChange}
                     maxLength="20"
                 />
+                <textarea
+                    className="task-prio-setter"
+                    id="subTasks"
+                    value={this.state.prio}
+                    onChange={this._onChange}
+                    maxLength="20"
+                />
                 <br></br>
                 <button
                     className="task-create"
@@ -85,11 +98,13 @@ class TaskComposer extends Component {
 
     _onSubmit(e) {
         e.preventDefault();
-        TaskUtils.createTask(hash, this.state.name.trim(), this.state.dueDate.trim(), this.state.drawing.trim(), this.state.assigned.trim(), this.state.subTasks.trim(), this.state.tags.trim())
+        {/* TaskUtils.createTask(hash, this.state.name.trim(), this.state.dueDate.trim(), this.state.drawing.trim(), this.state.assigned.trim(), this.state.subTasks.trim(), this.state.tags.trim()) */}
+        TaskUtils.createTask(hash, this.state);
         this.setState = {
             name: '',
             dueDate: '',
             tags: '',
+            prio: '',
             drawing: '',
             assigned: '',
             subTasks: '' 

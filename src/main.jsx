@@ -1,9 +1,15 @@
 import React from 'react';
 import { render } from 'react-dom';
 import 'css/style.css';
-import TaskSection from 'components/TaskSection';
+import App from 'containers/TaskContainer'
+import TaskReducer from 'reducers/TaskReducers'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
 
-import { browserHistory, Router, Route, Link, Redirect } from 'react-router'
+let store = createStore(TaskReducer);
 
-render(<TaskSection/>
-, document.getElementById('app'))
+render(
+    <Provider store={store}>
+        <App />
+        </Provider>
+    , document.getElementById('app'))

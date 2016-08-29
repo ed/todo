@@ -14,16 +14,17 @@ module.export = {
         //         }
         //     }
         },
-    createTask: function(hash, text, dateDue, drawing, assigned, subTasks, tags ){
+    createTask: function(hash, task){
         var task = {
             id: uuid.v4(),
-            text: text,
-            dateDue: dateDue,
-            assigned: assigned,
+            name: task.name,
+            dateDue: task.dateDue,
+            assigned: task.assigned,
             dateCreated: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            drawing: drawing,
-            subTasks: subTasks,
-            tags: tags
+            drawing: task.drawing,
+            subTasks: task.subTasks,
+            prio: task.prio,
+            tags: task.tags
         }
         console.log(task)
         // client.HMSET(hash, task);

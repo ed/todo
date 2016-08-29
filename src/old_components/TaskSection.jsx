@@ -14,6 +14,7 @@ class TaskSection extends Component {
 
     componentDidMount() {
         socket.on('update add', msg => this.setTask(msg));
+        
     };
 
     render() {
@@ -22,7 +23,7 @@ class TaskSection extends Component {
                 <ul className="task-list" ref="taskList">
                     {this.state.tasks}
                 </ul>
-                <TaskComposer/>
+                <TaskComposer channel={me}/>
             </div>
         );
     }
