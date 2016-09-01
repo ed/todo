@@ -17,7 +17,7 @@ class TodoSection extends Component {
             <div className="todo-section">
                 <ul className="todo-list" ref="todoList">
                     {tasks.entrySeq().map( ([key, value]) =>
-                    <Todo key={key} todo={value.obj} />)}
+                    <Todo key={value.id} todo={value.obj} idx={key} />)}
                 </ul>
             </div>
         );

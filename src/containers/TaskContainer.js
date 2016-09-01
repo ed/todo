@@ -10,16 +10,15 @@ class App extends Component {
         super(props);
         this._toggleState = this._toggleState.bind(this);
         this.state = {
-            todo: false
+            todoView: false
         }
     }
     _toggleState(e) {
         e.preventDefault();
-        this.setState({todo: !this.state.todo});
+        this.setState({todoView: !this.state.todoView});
     }
     render() {
         const { tasks, actions } = this.props;
-        console.log(this.state.todo)
         return (
             <div className="parent">
             <div className="column">
@@ -28,10 +27,10 @@ class App extends Component {
             value="add todo" 
             onClick={this._toggleState}
             />
-            {this.state.todo ? <TodoComposer addTask={actions.addTask}/> : null}
+            {this.state.todoView ? <TodoComposer addTask={actions.addTask}/> : null}
             </div>
             <div className="column">
-            {this.state.todo ? <TodoSection tasks={tasks} actions={actions}/> : null}
+            {this.state.todoView ? <TodoSection tasks={tasks} actions={actions}/> : null}
             </div>
             <div className="column">
             <h5>hi there</h5>
