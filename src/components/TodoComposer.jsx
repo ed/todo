@@ -1,79 +1,44 @@
 import React, { PropTypes, Component } from 'react';
+import { findDOMNode } from 'react-dom';
 
 
 class TodoComposer extends Component {
     constructor(props) {
         super(props);
-        this._onSubmit=this._onSubmit.bind(this);
+        this._onKeyDown=this._onKeyDown.bind(this);
         this._onChange=this._onChange.bind(this);
-        this.state = {
-            name: '',
-            dueDate: '',
-            prio: '',
-            tags: '',
-            done: false 
-        }
+        this.state = {name: ''};
     }
 
     render() {
         return (
-            <div className="form-parent">
-                <textarea
-                    className="todo-name-setter"
-                    id="name"
-                    value={this.state.name}
-                    maxLength="20"
-                    onChange={this._onChange}
-                />
-                <br></br>
-                <textarea
-                    className="todo-dueDate-setter"
-                    id="dueDate"
-                    value={this.state.dueDate}
-                    maxLength="20"
-                    onChange={this._onChange}
-                />
-                <br></br>
-                <textarea
-                    className="todo-tags-setter"
-                    id="tags"
-                    value={this.state.tags}
-                    maxLength="20"
-                    onChange={this._onChange}
-                />
-                <br></br>
-                <textarea
-                    className="todo-prio-setter"
-                    id="prio"
-                    value={this.state.prio}
-                    onChange={this._onChange}
-                    maxLength="20"
-                />
-                <br></br>
-                <input type="button"
-                    className="todo-create"
-                    onClick={this._onSubmit}
-                    value="new todo"
-                />
-            </div>
+            <textarea
+                className="todo-name-setter"
+                id="name"
+                value={this.state.name}
+                ref="tsetter"
+                onChange={this._onChange}
+                onKeyDown={this._onKeyDown}
+            />
         );
     }
 
     _onChange(e, value) {
         e.preventDefault();
-        this.setState({[e.target.id]: e.target.value});
+        this.setState({name: e.target.value});
     };
 
-    _onSubmit(e) {
-        e.preventDefault();
-        this.props.addTask(this.state, "todo");
-        this.setState({
-            name: '',
-            dueDate: '',
-            prio: '',
-            tags: '',
-            done: false 
-        });
+    _onKeyDown(e) {
+        if (!(event.ctrlKey || event.metaKey || event.altKey)) {
+            findDOMNode(this.refs.tsetter).focus(); 
+        }
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            let text = this.state.name.trim();
+            if (text)
+                this.props.addTask(text, "todo");
+            this.setState({name: ''});
+        }
     }
 }
 

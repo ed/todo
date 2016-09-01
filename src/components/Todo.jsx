@@ -9,14 +9,10 @@ class Todo extends Component {
     render (){
         var todo = this.props.todo;
         return (
-            <li className="todo-list-item">
-            <h2 className="todo-name">{todo.name}</h2>
-            <br></br>
-            <div className="todo-due-date"> {todo.dueDate}</div>
-            <br></br>
-            <div className="todo-priority">{todo.prio}</div>
-            <br></br>
-            <div className="todo-tags"> {todo.tags}</div>
+            <li clasName="todo-list-item">
+                <h5 className="todo-name">
+                    {todo}
+                </h5>
             </li>
         );
     }

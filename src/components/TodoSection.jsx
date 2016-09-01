@@ -13,7 +13,6 @@ class TodoSection extends Component {
 
     render() {
         const { tasks, actions } = this.props;
-        console.log(this.props.tasks);
         return (
             <div className="todo-section">
                 <ul className="todo-list" ref="todoList">
