@@ -6,7 +6,6 @@ html, body {
 #app {
     height: 100%;
 }
-
 .parent {
     display: flex;
     height: 100%;

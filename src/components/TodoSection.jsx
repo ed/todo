@@ -8,22 +8,16 @@ class TodoSection extends Component {
 
     constructor(props) {
         super(props);
-        const { tasks, actions } = this.props;
-        this._handleClick = this._handleClick.bind(this);
+        const { handleClick, tasks, actions } = this.props;
     };
 
-    _handleClick(e) {
-        e.preventDefault();
-        console.log(this.props.tasks.get(e.target.id));
-    }
-
-
     render() {
+        var handleClick = this.props.handleClick;
         return (
             <div className="todo-section">
                 <ul className="todo-list" ref="todoList">
                     {this.props.tasks.entrySeq().map( ([key, value]) =>
-                    <Todo key={value.id} todo={value.obj} idx={key} handleClick={this._handleClick} />)}
+                    <Todo key={value.id} todo={value.obj} idx={key} handleClick={handleClick} />)}
                 </ul>
             </div>
         );
