@@ -75,4 +75,31 @@ h5{
     flex: 0 1 5em;
 }
 
+.edit-column {
+    margin: 10px;
+    flex: 1 1 0;
+    flex-flow: row wrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
 
+.edit-buttons {
+    justify-content: flex-start;
+    flex: 0 1 5em;
+}
+
+.edit-column h2 {
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-list {
+    display:flex;
+}
+
+.delete-task{ 
+    height: 20px;
+    width: 100px;
+    }

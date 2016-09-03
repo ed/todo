@@ -3,13 +3,13 @@ let uuid = require('node-uuid');
 let moment = require('moment');
 
 
-export const addTask = (obj, task) => {
+export const addTask = (name, task) => {
     return {
         type: types.ADD_TASK,
         id: uuid.v4(),
         timestamp: moment(Date.now()).format("h:mm a"),
         task: task,
-        obj
+        name: name
     }
 }
 
@@ -20,15 +20,10 @@ export const deleteTask = (id) => {
     }
 }
 
-export const editTodo = (obj) => {
-    console.log(this)
-    console.log(obj)
+export const editTodo = (current, obj) => {
     return {
         type: types.EDIT_TODO,
-        dueDate: obj.dueDate,
-        tags: obj.tags,
-        prio: obj.prio,
-        users: obj.users,
-        sub : obj.sub
+        id: current,
+        obj
     }
 }

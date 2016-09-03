@@ -17,7 +17,7 @@ class TodoSection extends Component {
             <div className="todo-section">
                 <ul className="todo-list" ref="todoList">
                     {this.props.tasks.entrySeq().map( ([key, value]) =>
-                    <Todo key={value.id} todo={value.obj} idx={key} handleClick={handleClick} />)}
+                    <Todo key={value.get('id')} todo={value.get('name')} idx={key} handleClick={handleClick} />)}
                 </ul>
             </div>
         );

@@ -23,9 +23,12 @@ class App extends Component {
 
     _handleClick(e) {
         e.preventDefault();
+        let temp = this.props.tasks.get(e.target.id);
+        let key = temp.get('id');
+        let obj = temp.get('name');
         this.setState({editView: true, current: {
-            id: this.props.tasks.get(e.target.id).id,
-            name: this.props.tasks.get(e.target.id).obj,
+            id: key,
+            name: obj 
         }
         });
     }
