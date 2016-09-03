@@ -33,32 +33,27 @@ class TodoEdit extends Component {
 
     _onChange(e, value) {
         e.preventDefault();
-        this.setState({[e.target.id]: e.target.value, writing: true});
+        this.setState({[e.target.id]: e.target.value});
+        this.props.current[e.target.id] = e.target.value;
     };
 
 
     _onKeyDown(e) {
-        if (e.keyCode === 8) {
-            e.target.value = e.target.value.substr(0, e.target.value.length-1) 
-            this.props.current[e.target.id] = e.target.value.trim();
-        }
-        else if (e.keyCode === 9) {
-            e.preventDefault();
-            console.log('tab');
-        }
-        else if (e.keyCode === 13) {
+        if (e.keyCode === 13) {
             e.preventDefault();
             let temp = {
                 [e.target.id]: e.target.value.trim()
             }
-            if (temp.name) {
-                this.props.current.name = temp.name;
-            }
             if (e.target.value) {
-                this.props.current[e.target.id] = e.target.value.trim();
                 this.props.actions.editTodo(this.props.current.id, temp);
-                this.setState({[e.target.id]: '', writing:false});
+                this.props.current[e.target.id] = e.target.value;
+                this.setState({[e.target.id]: ''});
             }
+            let idx = this.arr.findIndex ( ptr => ptr.val == [e.target.id] )
+            if (idx+1 == this.arr.length)
+                document.getElementById(this.arr[idx].val).focus();
+            else if (idx+1 < this.arr.length) 
+                document.getElementById(this.arr[idx+1].val).focus();
         }
     }
 
@@ -72,7 +67,7 @@ class TodoEdit extends Component {
                     <input type="button" className = "delete-task" value="delete task" onClick={(e) => handleDelete(e)}/>
                 </div>
                 <div className="edit-column">
-                    <h2> {current.name} </h2>
+                    <h5> {current.name} </h5>
                     <ul className="edit-list-tems">
                         {this.arr.map( (obj, key) =>
                                       <Edit key={key} onKeyDown = {this._onKeyDown} onChange={this._onChange} id={obj.val} val={current[obj.val] || this.state[obj.val]} def={obj.def} cname={obj.cname}/>)}

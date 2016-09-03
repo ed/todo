@@ -43,7 +43,7 @@ class App extends Component {
 
     handleDelete(e) {
         e.preventDefault();
-        this.props.actions.deleteTask(this.state.current.id)
+        this.props.actions.deleteTask(this.current.id)
         this.setState({editView: false});
     }
 

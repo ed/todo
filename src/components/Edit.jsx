@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 var ReactPropTypes = React.PropTypes;
 
 class Edit extends Component {
-
     render (){
         const {onKeyDown, onChange, def , val, cname, id} = this.props;
         return (
