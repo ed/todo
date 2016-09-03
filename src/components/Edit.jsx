@@ -12,7 +12,7 @@ class Edit extends Component {
                     id={id}
                     value={val}
                     maxLength="20"
-                    placeholder={val ? val : def}
+                    placeholder={def}
                     onChange={(e) => onChange(e)}
                     onKeyDown={(e) => onKeyDown(e)}
                 />

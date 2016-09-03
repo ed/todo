@@ -12,11 +12,16 @@ class App extends Component {
         this._handleClick = this._handleClick.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.state = {
-            editView: false,
-            current: {
-                id: '',
-                name: ''
-            }
+            editView: false
+        }
+        this.current = {
+            id: '',
+            name: '',
+            dueDate: '',
+            tags: '',
+            prio: '',
+            users: '',
+            sub: ''
         }
     }
 
@@ -24,13 +29,16 @@ class App extends Component {
     _handleClick(e) {
         e.preventDefault();
         let temp = this.props.tasks.get(e.target.id);
-        let key = temp.get('id');
-        let obj = temp.get('name');
-        this.setState({editView: true, current: {
-            id: key,
-            name: obj 
+        this.setState({editView: true});
+        this.current = {
+            id: temp.get('id'),
+            name: temp.get('name'),
+            dueDate: temp.get('dueDate'),
+            tags: temp.get('tags'),
+            prio: temp.get('prio'),
+            users: temp.get('users'),
+            sub: temp.get('sub')
         }
-        });
     }
 
     handleDelete(e) {
@@ -38,11 +46,10 @@ class App extends Component {
         this.props.actions.deleteTask(this.state.current.id)
         this.setState({editView: false});
     }
-    
+
     render() {
         const { tasks, actions } = this.props;
         return (
-
             <div className="parent">
             <div className="sidebar" style={{background: '#01FF70'}}>
             <h5> sidebar </h5>
@@ -53,7 +60,7 @@ class App extends Component {
             <TodoSection tasks={tasks} actions={actions} handleClick={this._handleClick} />
             </div>
             <div className="column" style={{background: '#FFFFFF'}}>
-            {this.state.editView ? <TodoEdit actions={actions} current={this.state.current} handleDelete={this.handleDelete}/> : null}
+            {this.state.editView ? <TodoEdit actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
             </div>
             </div>
         )
