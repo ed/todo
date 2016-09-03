@@ -41,7 +41,7 @@ class App extends Component {
         return (
 
             <div className="parent">
-            <div className="column" style={{background: '#01FF70'}}>
+            <div className="sidebar" style={{background: '#01FF70'}}>
             <h5> sidebar </h5>
             <h5> todo </h5>
             </div>

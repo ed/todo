@@ -19,3 +19,16 @@ export const deleteTask = (id) => {
         id
     }
 }
+
+export const editTodo = (obj) => {
+    console.log(this)
+    console.log(obj)
+    return {
+        type: types.EDIT_TODO,
+        dueDate: obj.dueDate,
+        tags: obj.tags,
+        prio: obj.prio,
+        users: obj.users,
+        sub : obj.sub
+    }
+}

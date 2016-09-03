@@ -63,16 +63,16 @@ h5{
 }
 .column {
     margin: 10px;
-    flex: 2 2 0;
+    flex: 1 1 0;
     flex-flow: row wrap;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.column:first-of-type {
+.sidebar {
     justify-content: flex-start;
-    flex: 1 1 0;
+    flex: 0 1 5em;
 }
 
 
