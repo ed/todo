@@ -36,17 +36,17 @@ export const createList = (name) => {
     }
 }
 
-export const moveTo = (id, sublist) => {
+export const beforeMove = (id, name) => {
     return {
         type: types.MOVE_TO,
-        sublist: sublist,
+        name: name,
         id: id
     }
 }
 
-export const afterMove = (id, sublist) => {
+export const moveTo = (id, sublist) => {
     return dispatch => {
-        dispatch(moveTo(id, sublist));
+        dispatch(beforeMove(id, sublist));
         dispatch(deleteTask(id));
     }
 }

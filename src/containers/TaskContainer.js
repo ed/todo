@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import * as TaskActions from '../actions/TaskActions';
-import TodoComposer from '../components/TodoComposer';
 import TodoSection from '../components/TodoSection';
 import TodoEdit from '../components/TodoEdit';
 import { bindActionCreators } from 'redux';
+import {Router, browserHistory} from 'react-router';
 
 
 class App extends Component {
@@ -24,6 +24,7 @@ class App extends Component {
             users: '',
             sub: ''
         }
+        this.sections = []
     }
 
     componentDidMount() {
@@ -44,8 +45,6 @@ class App extends Component {
             sub: temp.get('sub')
         }
         this.setState({editView: true});
-        this.props.actions.afterMove(this.current.id, 'test');
-        this.setState({editView: false});
     }
 
     handleDelete(e) {
@@ -58,17 +57,14 @@ class App extends Component {
         const { tasks, actions } = this.props;
         return (
             <div className="parent">
-            <div className="sidebar" style={{background: '#01FF70'}}>
+            <div className="sidebar" style={{background: '#7FDBFF'}}>
             <h5> sidebar </h5>
             <h5> todo </h5>
             </div>
-            <div className="column" style={{background: '#7FDBFF'}}>
-            <TodoComposer addTask={actions.addTask}/>
-            <TodoSection tasks={tasks} actions={actions} handleClick={this._handleClick} />
-            </div>
             <div className="column" style={{background: '#FFFFFF'}}>
-            {this.state.editView ? <TodoEdit actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
+            <TodoSection sections={this.sections} tasks={tasks} actions={actions} handleClick={this._handleClick} />
             </div>
+            {this.state.editView ? <TodoEdit actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
             </div>
         )
     }

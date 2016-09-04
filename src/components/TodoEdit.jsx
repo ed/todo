@@ -31,6 +31,7 @@ class TodoEdit extends Component {
         }
     };
 
+
     _onChange(e, value) {
         e.preventDefault();
         this.setState({[e.target.id]: e.target.value});
@@ -62,7 +63,7 @@ class TodoEdit extends Component {
         let arr = [];
         const { current } = this.props
         return (
-            <div className="edit-list">
+            <div className="column" style={{borderLeft: "thin solid #000000"}}>
                 <div className="edit-buttons">
                     <input type="button" className = "delete-task" value="delete task" onClick={(e) => handleDelete(e)}/>
                 </div>
