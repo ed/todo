@@ -6,25 +6,26 @@ class TodoEdit extends Component {
 
     constructor(props) {
         super(props);
-        const { handleDelete, current , actions } = this.props;
+        const { handleDelete, current, actions, hyphenate } = this.props;
         this._onChange = this._onChange.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
         this.state = {
             writing: false,
             name: '',
-            dueDate:'',
+            dueDate: '',
             tags: '',
             prio: '',
-            users:'',
+            users: '',
             sub: '',
         }
         this.arr = []
         for (var i in current) {
-            if (i=="id")
+            if (i == "id")
                 continue
+            let ih = this.props.hyphenate(i)
             let obj = {
-                cname: "todo-"+i+"-setter",
-                def: "set " + i,
+                cname: "todo-" + ih + "-setter",
+                def: "set " + ih,
                 val: i
             }
             this.arr.push(obj);
@@ -34,7 +35,7 @@ class TodoEdit extends Component {
 
     _onChange(e, value) {
         e.preventDefault();
-        this.setState({[e.target.id]: e.target.value});
+        this.setState({ [e.target.id]: e.target.value });
         this.props.current[e.target.id] = e.target.value;
     };
 
@@ -48,13 +49,13 @@ class TodoEdit extends Component {
             if (e.target.value) {
                 this.props.actions.editTodo(this.props.current.id, temp);
                 this.props.current[e.target.id] = e.target.value;
-                this.setState({[e.target.id]: ''});
+                this.setState({ [e.target.id]: '' });
             }
-            let idx = this.arr.findIndex ( ptr => ptr.val == [e.target.id] )
-            if (idx+1 == this.arr.length)
+            let idx = this.arr.findIndex(ptr => ptr.val == [e.target.id])
+            if (idx + 1 == this.arr.length)
                 document.getElementById(this.arr[idx].val).focus();
-            else if (idx+1 < this.arr.length) 
-                document.getElementById(this.arr[idx+1].val).focus();
+            else if (idx + 1 < this.arr.length)
+                document.getElementById(this.arr[idx + 1].val).focus();
         }
     }
 
@@ -63,19 +64,14 @@ class TodoEdit extends Component {
         let arr = [];
         const { current } = this.props
         return (
-            <div className="column" style={{borderLeft: "thin solid #000000"}}>
-                <div className="edit-buttons">
-                    <input type="button" className = "delete-task" value="delete task" onClick={(e) => handleDelete(e)}/>
-                </div>
-                <div className="edit-column">
-                    <h5> {current.name} </h5>
-                    <ul className="edit-list-tems">
-                        {this.arr.map( (obj, key) =>
-                                      <Edit key={key} onKeyDown = {this._onKeyDown} onChange={this._onChange} id={obj.val} val={current[obj.val] || this.state[obj.val]} def={obj.def} cname={obj.cname}/>)}
-                                  </ul>
-                              </div>
-
-                          </div>
+            <div className="edit-column" style={{ borderLeft: "thin solid #000000" }}>
+                <input type="button" className = "delete-task" value="delete task" onClick={(e) => handleDelete(e) }/>
+                <h5> {current.name} </h5>
+                <ul className="edit-list">
+                    {this.arr.map((obj, key) =>
+                        <Edit key={key} onKeyDown = {this._onKeyDown} onChange={this._onChange} id={obj.val} val={current[obj.val] || this.state[obj.val]} def={obj.def} cname={obj.cname}/>) }
+                </ul>
+            </div>
         )
     }
 

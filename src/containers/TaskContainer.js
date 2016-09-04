@@ -13,7 +13,8 @@ class App extends Component {
         this._handleClick = this._handleClick.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.state = {
-            editView: false
+            editView: false,
+            viewing: ''
         }
         this.current = {
             id: '',
@@ -31,6 +32,9 @@ class App extends Component {
         const { dispatch } = this.props;
     }
 
+    hyphenate(i) {
+        return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    }
 
     _handleClick(e) {
         e.preventDefault();
@@ -44,7 +48,11 @@ class App extends Component {
             users: temp.get('users'),
             sub: temp.get('sub')
         }
-        this.setState({editView: true});
+        this.setState({viewing: this.current.name})
+        if(this.state.viewing == this.current.name)
+            this.setState({editView: !this.state.editView});
+        else
+            this.setState({editView: true});
     }
 
     handleDelete(e) {
@@ -64,7 +72,7 @@ class App extends Component {
             <div className="column" style={{background: '#FFFFFF'}}>
             <TodoSection sections={this.sections} tasks={tasks} actions={actions} handleClick={this._handleClick} />
             </div>
-            {this.state.editView ? <TodoEdit actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
+            {this.state.editView ? <TodoEdit hyphenate={this.hyphenate} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
             </div>
         )
     }

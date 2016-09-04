@@ -75,7 +75,7 @@ h5{
 
 .edit-column {
     display: flex;
-    flex: 1 1 0;
+    flex: 0 1 30em;
     flex-flow: column wrap;
     white-space: nowrap;
     overflow: hidden;
@@ -89,7 +89,7 @@ h5{
 }
 
 .edit-column h5 {
-    flex: 1 1 2em;
+    flex: 0 1 2em;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -97,7 +97,9 @@ h5{
 }
 
 .edit-list {
-    display:flex;
+    justify-content: center;
+    flex-flow: column wrap;
+    align-items: flex-start;
 }
 
 .delete-task{ 
