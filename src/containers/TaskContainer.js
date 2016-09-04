@@ -6,6 +6,7 @@ import TodoSection from '../components/TodoSection';
 import TodoEdit from '../components/TodoEdit';
 import { bindActionCreators } from 'redux';
 
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -25,11 +26,14 @@ class App extends Component {
         }
     }
 
+    componentDidMount() {
+        const { dispatch } = this.props;
+    }
+
 
     _handleClick(e) {
         e.preventDefault();
         let temp = this.props.tasks.get(e.target.id);
-        this.setState({editView: true});
         this.current = {
             id: temp.get('id'),
             name: temp.get('name'),
@@ -39,6 +43,9 @@ class App extends Component {
             users: temp.get('users'),
             sub: temp.get('sub')
         }
+        this.setState({editView: true});
+        this.props.actions.afterMove(this.current.id, 'test');
+        this.setState({editView: false});
     }
 
     handleDelete(e) {

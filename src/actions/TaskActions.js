@@ -27,3 +27,26 @@ export const editTodo = (current, obj) => {
         obj
     }
 }
+
+export const createList = (name) => {
+    return {
+        type: types.CREATE_LIST,
+        timestamp: moment(Date.now()).format("h:mm a"),
+        name
+    }
+}
+
+export const moveTo = (id, sublist) => {
+    return {
+        type: types.MOVE_TO,
+        sublist: sublist,
+        id: id
+    }
+}
+
+export const afterMove = (id, sublist) => {
+    return dispatch => {
+        dispatch(moveTo(id, sublist));
+        dispatch(deleteTask(id));
+    }
+}
