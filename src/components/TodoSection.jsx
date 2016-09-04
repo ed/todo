@@ -9,9 +9,8 @@ class TodoSection extends Component {
 
     constructor(props) {
         super(props);
-        const { handleClick, tasks, actions, sections } = this.props;
+        const { handleClick, tasks, actions, sections, editOff } = this.props;
         this.onClick = this.onClick.bind(this);
-        this._onClick = this._onClick.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.onChange = this.onChange.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
@@ -35,6 +34,8 @@ class TodoSection extends Component {
     }
 
     handleSelect(key) {
+        console.log(key)
+        this.props.editOff()
         if (key == "new")
             this.open();
         else
@@ -75,10 +76,6 @@ class TodoSection extends Component {
             this.close()
     }
 
-    _onClick(e) {
-        e.preventDefault();
-    }
-
     render() {
         var handleClick = this.props.handleClick;
         return (
@@ -96,23 +93,27 @@ class TodoSection extends Component {
                         </Modal.Footer>
                     </Modal>
                 </div>
-                <Tabs activeKey={this.state.key} id="todo-section-tabs" onClick={this._onClick} onSelect={this.handleSelect}>
-                    <Tab eventKey={0} title="Main">
-                        <textarea
-                            autoFocus
-                            className="todo-name-setter"
-                            id="name"
-                            value={this.state.name}
-                            onChange={this.onChange}
-                            onKeyDown={this.onKeyDown}
-                            />
-                        <ul className="todo-list" ref="todoList">
-                            {this.props.tasks.entrySeq().map(([key, value]) =>
-                                <Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={handleClick} />) }
-                        </ul>
-                    </Tab>
+
+                <Tabs activeKey={this.state.key} id="todo-section-tabs" onSelect={this.handleSelect}>
                     {this.props.sections.map((obj) =>
-                        <Tab key={obj.key} eventKey={obj.key} title={obj.val}> </Tab>) }
+                        <Tab key={obj.key} eventKey={obj.key} title={obj.val}>
+                            {obj.val == 'main' ? 
+                            <div className="text-input">
+                            <textarea
+                                autoFocus
+                                className="todo-name-setter"
+                                id="name"
+                                value={this.state.name}
+                                onChange={this.onChange}
+                                onKeyDown={this.onKeyDown}
+                                />  
+                                </div>
+                                : ''}
+                            <ul className="todo-list" ref="todoList">
+                                {this.props.tasks.filter(task => task.get('location') == obj.val).entrySeq().map(([key, value]) =>
+                                    <Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={handleClick} />) }
+                            </ul>
+                        </Tab>) }
                     <Tab eventKey={"new"} title="+"> </Tab>
                 </Tabs>
             </div>

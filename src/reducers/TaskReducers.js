@@ -9,6 +9,7 @@ export default function taskReducer(state=List(), action) {
                     timestamp: action.timestamp, 
                     task: action.task, 
                     name: action.name,
+                    location: action.location,
                     done: false})
             );
         case DELETE_TASK:
@@ -27,12 +28,8 @@ export default function taskReducer(state=List(), action) {
             secItem = secItem.filter( map => map.get('id') !== action.id ); 
             return state;
         case MOVE_TO:
-            let temp2 = state.findIndex(map => map.get(action.name));
-            temp2 = state.get(temp2).get(action.name);
-            let temp3 = state.findIndex(map => map.get('id') === action.id);
-            temp2 = temp2.push(state.get(temp3));
-            return state;
-
+            let temp2 = state.findIndex(map => map.get(action.id));
+            return state.update(temp2, map => map.set('location', action.section))
         default:
             return state;
     }

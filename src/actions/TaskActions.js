@@ -9,6 +9,7 @@ export const addTask = (name, task) => {
         id: uuid.v4(),
         timestamp: moment(Date.now()).format("h:mm a"),
         task: task,
+        location: 'main',
         name: name
     }
 }
@@ -28,25 +29,10 @@ export const editTodo = (current, obj) => {
     }
 }
 
-export const createList = (name) => {
-    return {
-        type: types.CREATE_LIST,
-        timestamp: moment(Date.now()).format("h:mm a"),
-        name
-    }
-}
-
-export const beforeMove = (id, name) => {
+export const moveTo = (id, section) => {
     return {
         type: types.MOVE_TO,
-        name: name,
-        id: id
-    }
-}
-
-export const moveTo = (id, sublist) => {
-    return dispatch => {
-        dispatch(beforeMove(id, sublist));
-        dispatch(deleteTask(id));
+        id: id,
+        section: section
     }
 }
