@@ -5,6 +5,7 @@ import TodoSection from '../components/TodoSection';
 import TodoEdit from '../components/TodoEdit';
 import { bindActionCreators } from 'redux';
 import {Router, browserHistory} from 'react-router';
+import {hyphenate, agenda} from '../utils/GeneralUtils'
 
 
 class App extends Component {
@@ -23,6 +24,7 @@ class App extends Component {
             name: '',
             dueDate: '',
             tags: '',
+			time: '',
             prio: '',
             users: '',
             sub: ''
@@ -33,11 +35,7 @@ class App extends Component {
         }]
     }
 
-
-    hyphenate(i) {
-        return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-    }
-
+    
     editOff() {
         this.setState({ editView: false });
     }
@@ -69,12 +67,14 @@ class App extends Component {
 
     onClick(e) {
         e.preventDefault();
-        if (this.state.editView == true)
+        if (this.state.editView == true && e.target.id=="")
             this.editOff();
     }
 
     render() {
         const { tasks, actions } = this.props;
+        let views = [];
+        views = agenda();
         return (
             <div className="parent">
                 <div className="sidebar" style={{ background: '#7FDBFF' }}>
@@ -82,9 +82,9 @@ class App extends Component {
                     <h5> todo </h5>
                 </div>
                 <div className="column" onClick={(e) => this.onClick(e)} style={{ background: '#FFFFFF' }}>
-                    <TodoSection editOff={this.editOff} sections={this.sections} tasks={tasks} actions={actions} handleClick={this._handleClick} />
+                    <TodoSection agenda={views} editOff={this.editOff} sections={this.sections} tasks={tasks} actions={actions} handleClick={this._handleClick} />
                 </div>
-                {this.state.editView ? <TodoEdit editOff={this.editOff} hyphenate={this.hyphenate} sections={this.sections} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
+                {this.state.editView ? <TodoEdit editOff={this.editOff} hyphenate={hyphenate} sections={this.sections} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
             </div>
         )
     }

@@ -3,7 +3,7 @@ var ReactPropTypes = React.PropTypes;
 
 class Edit extends Component {
     render (){
-        const {onKeyDown, onChange, def , val, cname, id} = this.props;
+        const {onKeyDown, onChange, def , val, cname, id, handleClick} = this.props;
         return (
             <li className="edit-list-item">
                 <textarea

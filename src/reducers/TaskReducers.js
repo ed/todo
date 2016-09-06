@@ -10,6 +10,9 @@ export default function taskReducer(state=List(), action) {
                     task: action.task, 
                     name: action.name,
                     location: action.location,
+					time: action.time,
+					dueDate: action.dueDate,
+					tags: action.tags,
                     done: false})
             );
         case DELETE_TASK:

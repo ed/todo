@@ -9,8 +9,13 @@ export const addTask = (name, task) => {
         id: uuid.v4(),
         timestamp: moment(Date.now()).format("h:mm a"),
         task: task,
+		name: name,
         location: 'main',
-        name: name
+		time: '',
+		prio: '',
+		users: '',
+		dueDate: '',
+		tags: ''
     }
 }
 
