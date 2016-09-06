@@ -13,13 +13,11 @@ class Todo extends Component {
 	render (){
 		const { todo, handleClick, idx, time, tags } = this.props;
         return (
-            <li className="todo-list-item">
                 <h5 className="todo-name">
                     <a href="#" id={idx} onClick={(e) => handleClick(e)}>
-						{time} {todo} {tags}
+						{todo}
                     </a>
                 </h5>
-            </li>
         );
     }
 }

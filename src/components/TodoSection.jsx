@@ -85,18 +85,22 @@ class TodoSection extends Component {
 					value={this.state.name}
 					onChange={this.onChange}
 					onKeyDown={this.onKeyDown}
-				/>
+					/>
 				<ul className="agenda">
 					{this.props.agenda.map((day, idx) =>
-						<ul key={idx}> {day} 
+						<ul key={idx}> {day}
 							{this.props.tasks.filter(task => task.get('dueDate') == day).entrySeq().map(([key, value]) =>
-						<Todo key={value.get('id') } time={value.get('time')} tags={value.get('tags').toUpperCase()} todo={value.get('name') } idx={key} handleClick={handleClick} />) }
-
-</ul>) }
+								<li key={key}>
+									{value.get('time') }
+									{value.get('task').toUpperCase() }
+									<Todo key={value.get('id') } tags={value.get('tags').toUpperCase() } todo={value.get('name') } idx={key} handleClick={handleClick} />
+									{value.get('tags').toUpperCase() }
+								</li>) }
+						</ul>) }
 				</ul>
 				<ul className="todo-list" ref="todoList">
 					{this.props.tasks.filter(task => task.get('location') == 'main').entrySeq().map(([key, value]) =>
-					<Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={handleClick} />) }
+						<Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={handleClick} />) }
 				</ul>
 			</div>
 		);
