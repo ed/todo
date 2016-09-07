@@ -6,9 +6,22 @@ main goal is to learn how redux's data flow mixes in with react and eventually u
 
 
 
-things to do:
-  user model
-  notes, events ( should just be an extension of todo )
-  login
-  design
+things to do:  
+  user model  
+  notes, events ( should just be an extension of todo )  
+  login  
+  design  
+  
+  
+to get started:  
+```
+git clone https://github.com/ed/todo/  
+```
+```
+npm install
+```
+```
+npm start
+```
+navigate to localhost:3000
   
