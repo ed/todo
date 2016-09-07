@@ -15,7 +15,7 @@ things to do:
   
 to get started:  
 ```
-git clone https://github.com/ed/todo/  
+git clone https://github.com/ed/todo.git  
 ```
 ```
 npm install
