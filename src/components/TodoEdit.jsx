@@ -97,11 +97,6 @@ class TodoEdit extends Component {
 		this.toggleModal();
 	}
 
-	componentDidMount() {
- 		var setting = document.getElementById('setting');
-  		setting.opacity='1'; 	
-  	}
-
 	_onKeyDown(e) {
 		if (e.keyCode === 13) {
 			e.preventDefault();

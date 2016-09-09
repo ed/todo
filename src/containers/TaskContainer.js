@@ -23,7 +23,7 @@ class App extends Component {
             editView: false,
 			viewing: '',
 			name: '',
-            opacity: '0',
+            opacity: false,
         }
         this.current = {
             id: '',
@@ -41,8 +41,12 @@ class App extends Component {
 		}]
 		this.sections.push({val:"2", key:"s1"})
 		this.week = agenda();
-    }
+	}
 
+
+	toggleOpacity() {
+		this.setState({opacity: !this.state.opacity})
+	}
     
     editOff() {
         this.setState({ editView: false });
@@ -90,11 +94,14 @@ class App extends Component {
             sub: temp.get('sub')
         }
         this.setState({ viewing: this.current.name })
-        if (this.state.viewing == this.current.name)
+        if (this.state.viewing == this.current.name) {
             this.setState({ editView: !this.state.editView });
-        else
-            this.setState({ editView: true });
-        document.getElementById('setting').opacity='1';
+			this.toggleOpacity();
+		}
+        else {
+			this.setState({ editView: true });
+			this.setState({ opacity: true });
+		}
     }
 
     handleDelete(e) {
@@ -111,7 +118,8 @@ class App extends Component {
     }
 
     render() {
-        const { tasks, actions } = this.props;
+		const { tasks, actions } = this.props;
+		let op = this.state.opacity ? 1 : 0
 		return (
 			<div className="Grid Grid--flexCells">
 				<div className="Grid-cell u-1of4" id="nav-panel">
@@ -131,7 +139,7 @@ class App extends Component {
 				/>
 				{tasks.entrySeq().map(([key, value]) => <Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={this._handleClick} />) }
 				</div>
-                <div className="Grid-cell" id="setting" >
+                <div className="Grid-cell" style={{opacity: op , transitionDuration: '.7s' }}>
                     {this.state.editView ? <TodoEdit editOff={this.editOff} hyphenate={hyphenate} sections={this.sections} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
 			    </div>
 			</div>
