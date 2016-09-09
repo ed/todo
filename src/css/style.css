@@ -1,3 +1,3 @@
-@import "./grid.css";
-@import "./cols.css";
-@import "./main.css";
+@import "./base/grid.css";
+@import "./utils/cols.css";
+@import "./base/main.css";
