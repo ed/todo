@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import Todo from './Todo';
-import { Glyph, Modal, ModalBody, ModalHeader, ModalFooter, Button, Dropdown} from 'elemental';
-import 'elemental/less/elemental.less'
 
 class TodoSection extends Component {
 
@@ -50,8 +48,7 @@ class TodoSection extends Component {
 												<Todo key={value.get('id') } tags={value.get('tags').toUpperCase() } todo={value.get('name') } idx={key} handleClick={handleClick} />
 												{value.get('tags').toUpperCase() }
 										</li>)} </ul>) : ''}
-							</ul>) }
-
+									</ul>)}
 				</ul>
 			</div>
 		);

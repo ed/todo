@@ -14,7 +14,9 @@ class Todo extends Component {
 		const { todo, handleClick, idx, time, tags } = this.props;
         return (
                 <h5 className="todo-name">
-					<textarea href="#" id={idx} value={todo} onClick={(e) => handleClick(e)}/>
+                    <a href="#" id={idx} onClick={(e) => handleClick(e)}>
+						{todo}
+                    </a>
                 </h5>
         );
     }
