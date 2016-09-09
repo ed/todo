@@ -115,7 +115,7 @@ class App extends Component {
 				<div className="Grid-cell u-1of4" id="nav-panel">
 					sidebar
 				</div>
-				<div className="Grid-cell" onClick={this.onClick} style={{padding: '10px'}}>
+				<div className="Grid-cell" style={{padding: '10px'}}>
 				<div className="Grid-cell">
 				<textarea
 					autoFocus
