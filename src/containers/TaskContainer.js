@@ -110,16 +110,18 @@ class App extends Component {
 
     render() {
         const { tasks, actions } = this.props;
-        return (
-            <div className="Grid Grid--gutters" >
-				<div className="Grid-cell Grid-cell--1of4" style={{color:'#e9e9e9',background:'#2f2c2f',fontWeight: 400}}>
+		return (
+			<div className="Grid Grid--gutters Grid--flexCells">
+				<div className="Grid-cell u-1of4" style={{color:'#e9e9e9',background:'#2f2c2f',fontWeight: 400}}>
 					<h5> sidebar </h5>
 				</div>
-				<div className="Grid-cell" onClick={this.onClick} style={{padding: '15px'}}>
+				<div className="Grid-cell" onClick={this.onClick} style={{padding: '10px'}}>
+				<div className="Grid-cell">
 				<textarea
 					autoFocus
 					className="todo-name-setter"
 					id="name"
+					maxLength={30}
 					ref={(c) => this._input = c}
 					value={this.state.name}
 					onChange={this.onChange}
@@ -128,10 +130,8 @@ class App extends Component {
 				{tasks.entrySeq().map(([key, value]) => <Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={this._handleClick} />) }
 				</div>
                 <div className="Grid-cell" >
-                    <TodoSection agenda={this.week} editOff={this.editOff} sections={this.sections} tasks={tasks} actions={actions} handleClick={this._handleClick} />
-			</div>
-                <div className="Grid-cell" >
                 {this.state.editView ? <TodoEdit editOff={this.editOff} hyphenate={hyphenate} sections={this.sections} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
+			</div>
 			</div>
 				</div>
         )

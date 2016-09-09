@@ -3,10 +3,6 @@ import { findDOMNode } from 'react-dom';
 import Edit from './Edit';
 import { Glyph, Modal, ModalBody, ModalHeader, ModalFooter, Button, Dropdown} from 'elemental';
 let moment = require('moment');
-import { SingleDatePicker } from 'react-dates'
-import 'react-dates/css/styles.scss'
-import 'react-dates/css/variables.scss'
-import 'elemental/less/elemental.less'
 
 
 class TodoEdit extends Component {
