@@ -51,8 +51,8 @@ class TodoEdit extends Component {
 			this.time.push({label: i+":00am"})
 			this.time.push({label: i+":30am"})
 		}
-			this.time.push({label: "12:00pm"})
-			this.time.push({label: "12:30pm"})
+		this.time.push({label: "12:00pm"})
+		this.time.push({label: "12:30pm"})
 		for (var i = 1 ; i < 12; i++) {
 			this.time.push({label: i+":00pm"})
 			this.time.push({label: i+":30pm"})
@@ -108,15 +108,9 @@ class TodoEdit extends Component {
 				[e.target.id]: e.target.value.trim()
 			}
 			if (e.target.value) {
-				if (e.target.id == "dueDate" && !moment(e.target.value).isValid())
-					{
-						alert('not a valid date');
-						this.setState({ [e.target.id]: '' });
-						return;
-					}
-					this.props.actions.editTodo(this.props.current.id, temp);
-					this.props.current[e.target.id] = e.target.value;
-					this.setState({ [e.target.id]: '' });
+				this.props.actions.editTodo(this.props.current.id, temp);
+				this.props.current[e.target.id] = e.target.value;
+				this.setState({ [e.target.id]: '' });
 			}
 			let idx = this.arr.findIndex(ptr => ptr.val == [e.target.id])
 			if (idx + 1 == this.arr.length)
@@ -131,34 +125,13 @@ class TodoEdit extends Component {
 		let arr = [];
 		const { current } = this.props;
 		return (
-			<div className="edit-column" style={{ borderLeft: "thin solid #000000" }}>
-				<div style={{flexFlow: "row wrap", justifyContent: "flex-start", alignItems: "flex-start"}}>
+			<div>
 					<Button type="link" onClick={this.toggleModal} ><Glyph icon="calendar" /></Button>
 					<Button type="link" onClick={(e) => handleDelete(e)}> <Glyph icon="trashcan" type="danger"/></Button>
-				</div>
-				<div className="modal" style={{display: 'flex'}}>
-					<Modal isOpen={this.state.showModal} onCancel={this.handleSubmit} backdropClosesModal>
-						<ModalHeader
-							text="select date and time" showCloseButton onClose={this.handleSubmit}
-						/>
-						<ModalBody>
-							<SingleDatePicker
-								id="date_input"
-								date={this.state.dueDate}
-								focused={this.state.focused}
-								numberOfMonths={1}
-								onDateChange={this.onDateChange}
-								onFocusChange={this.onFocusChange}
-							/>
-							<Dropdown items={this.time} buttonType="primary" buttonLabel={this.state.time ? this.state.time : "Set Time"} onClick={(e) => this.handleTime(e)} />
-						</ModalBody>
-					</Modal>
-				</div>
 				<ul className="edit-list">
-					{this.arr.map((obj, key) =>
-								  <Edit key={key} onKeyDown = {this._onKeyDown} onChange={this._onChange} id={obj.val} val={current[obj.val] || this.state[obj.val]} def={obj.def} cname={obj.cname}/>) }
-							  </ul>
-						  </div>
+					{this.arr.map((obj, key) => <Edit key={key} onKeyDown = {this._onKeyDown} onChange={this._onChange} id={obj.val} val={current[obj.val] || this.state[obj.val]} def={obj.def} cname={obj.cname}/>) }
+				</ul>
+			</div>
 		)
 	}
 }

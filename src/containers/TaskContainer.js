@@ -1,8 +1,10 @@
 import { connect } from 'react-redux';
+import { findDOMNode } from 'react-dom';
 import React, { Component } from 'react';
 import * as TaskActions from '../actions/TaskActions';
 import TodoSection from '../components/TodoSection';
 import TodoEdit from '../components/TodoEdit';
+import Todo from '../components/Todo';
 import { bindActionCreators } from 'redux';
 import {Router, browserHistory} from 'react-router';
 import {hyphenate, agenda} from '../utils/GeneralUtils'
@@ -15,9 +17,12 @@ class App extends Component {
         this.onClick = this.onClick.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.editOff = this.editOff.bind(this);
+		this.onChange = this.onChange.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
         this.state = {
             editView: false,
-            viewing: ''
+			viewing: '',
+			name: ''
         }
         this.current = {
             id: '',
@@ -31,14 +36,45 @@ class App extends Component {
         }
         this.sections = [{
             val: "main",
-            key: 0
-        }]
+            key: "s0"
+		}]
+		this.sections.push({val:"2", key:"s1"})
+		this.week = agenda();
     }
 
     
     editOff() {
         this.setState({ editView: false });
-    }
+	}
+
+	onChange(e) {
+		e.preventDefault();
+		this.setState({ [e.target.id]: e.target.value });
+	};
+
+	onKeyDown(e) {
+		if (e.keyCode === 13) {
+			e.preventDefault();
+			if (e.target.value) {
+				this.setState({ [e.target.id]: e.target.value });
+				if ([e.target.id] == 'name') {
+					this.props.actions.addTask(e.target.value, "todo");
+					this.setState({ name: '' });
+				}
+				else if ([e.target.id] == 'section') {
+					this.close();
+					let obj = {
+						val: this.state.section,
+						key: this.state.max + 1
+					}
+					this.props.sections.push(obj)
+					this.handleSelect(obj.key)
+					this.setState({ section: '', max: obj.key })
+				}
+			}
+		}
+	}
+
 
     _handleClick(e) {
         e.preventDefault();
@@ -66,26 +102,38 @@ class App extends Component {
     }
 
     onClick(e) {
-        e.preventDefault();
+		e.preventDefault();
+		findDOMNode(this._input).focus();
         if (this.state.editView == true && e.target.id=="")
             this.editOff();
     }
 
     render() {
         const { tasks, actions } = this.props;
-        let views = [];
-        views = agenda();
         return (
-            <div className="parent">
-                <div className="sidebar" style={{ background: '#7FDBFF' }}>
-                    <h5> sidebar </h5>
-                    <h5> todo </h5>
-                </div>
-                <div className="column" onClick={(e) => this.onClick(e)} style={{ background: '#FFFFFF' }}>
-                    <TodoSection agenda={views} editOff={this.editOff} sections={this.sections} tasks={tasks} actions={actions} handleClick={this._handleClick} />
-                </div>
+            <div className="Grid Grid--gutters" >
+				<div className="Grid-cell Grid-cell--1of4" style={{color:'#e9e9e9',background:'#2f2c2f',fontWeight: 400}}>
+					<h5> sidebar </h5>
+				</div>
+				<div className="Grid-cell" onClick={this.onClick} style={{padding: '15px'}}>
+				<textarea
+					autoFocus
+					className="todo-name-setter"
+					id="name"
+					ref={(c) => this._input = c}
+					value={this.state.name}
+					onChange={this.onChange}
+					onKeyDown={this.onKeyDown}
+				/>
+				{tasks.entrySeq().map(([key, value]) => <Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={this._handleClick} />) }
+				</div>
+                <div className="Grid-cell" >
+                    <TodoSection agenda={this.week} editOff={this.editOff} sections={this.sections} tasks={tasks} actions={actions} handleClick={this._handleClick} />
+			</div>
+                <div className="Grid-cell" >
                 {this.state.editView ? <TodoEdit editOff={this.editOff} hyphenate={hyphenate} sections={this.sections} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
-            </div>
+			</div>
+				</div>
         )
     }
 }
