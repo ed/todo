@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import Edit from './Edit';
-import { Glyph, Modal, ModalBody, ModalHeader, ModalFooter, Button, Dropdown} from 'elemental';
 let moment = require('moment');
 
 
@@ -94,7 +93,6 @@ class TodoEdit extends Component {
 			time: this.state.time
 		}
 		this.props.actions.editTodo(this.props.current.id, obj);
-		this.toggleModal();
 	}
 
 	_onKeyDown(e) {
@@ -122,8 +120,7 @@ class TodoEdit extends Component {
 		const { current } = this.props;
 		return (
 			<div>
-					<Button type="link" onClick={this.toggleModal} ><Glyph icon="calendar" /></Button>
-					<Button type="link" onClick={(e) => handleDelete(e)}> <Glyph icon="trashcan" type="danger"/></Button>
+				<input type="button" onClick={(e) => handleDelete(e)}/> 
 				<ul className="edit-list">
 					{this.arr.map((obj, key) => <Edit key={key} onKeyDown = {this._onKeyDown} onChange={this._onChange} id={obj.val} val={current[obj.val] || this.state[obj.val]} def={obj.def} cname={obj.cname}/>) }
 				</ul>

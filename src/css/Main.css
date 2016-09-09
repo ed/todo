@@ -63,3 +63,20 @@ textarea:focus {
 	padding: 7px;
 }
 
+.edittrans-enter {
+  opacity: 0.01;
+}
+
+.edittrans-enter.edittrans-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+
+.edittrans-leave {
+  opacity: 1;
+}
+
+.edittrans-leave.edittrans-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in-out;
+}
