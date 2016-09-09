@@ -22,7 +22,8 @@ class App extends Component {
         this.state = {
             editView: false,
 			viewing: '',
-			name: ''
+			name: '',
+            opacity: '0',
         }
         this.current = {
             id: '',
@@ -93,6 +94,7 @@ class App extends Component {
             this.setState({ editView: !this.state.editView });
         else
             this.setState({ editView: true });
+        document.getElementById('setting').opacity='1';
     }
 
     handleDelete(e) {
@@ -118,7 +120,6 @@ class App extends Component {
 				<div className="Grid-cell" style={{padding: '10px'}}>
 				<div className="Grid-cell">
 				<textarea
-					autoFocus
 					className="todo-name-setter"
 					id="name"
 					maxLength={30}
@@ -126,12 +127,13 @@ class App extends Component {
 					value={this.state.name}
 					onChange={this.onChange}
 					onKeyDown={this.onKeyDown}
+                    placeholder="event name"
 				/>
 				{tasks.entrySeq().map(([key, value]) => <Todo key={value.get('id') } todo={value.get('name') } idx={key} handleClick={this._handleClick} />) }
 				</div>
-                <div className="Grid-cell" >
-                {this.state.editView ? <TodoEdit editOff={this.editOff} hyphenate={hyphenate} sections={this.sections} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
-			</div>
+                <div className="Grid-cell" id="setting" >
+                    {this.state.editView ? <TodoEdit editOff={this.editOff} hyphenate={hyphenate} sections={this.sections} actions={actions} current={this.current} handleDelete={this.handleDelete}/> : null}
+			    </div>
 			</div>
 				</div>
         )
