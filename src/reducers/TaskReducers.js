@@ -13,6 +13,9 @@ export default function taskReducer(state=List(), action) {
 					time: action.time,
 					dueDate: action.dueDate,
 					tags: action.tags,
+					prio: action.prio,
+					users: action.users,
+					sub: action.sub,
                     done: false})
             );
         case DELETE_TASK:
