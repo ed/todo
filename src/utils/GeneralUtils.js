@@ -1,25 +1,21 @@
 module.exports = {
-	hyphenate: function (i) {
-		return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-	},
+  hyphenate(i) {
+    return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+  },
 
-	createEdits: function() {
-		let arr = [];
-		let s = {
-			tags: '',
-			prio: '',
-			users: '',
-			sub: ''
-		}
-		for (var i in s) {
-			let ih = module.exports.hyphenate(i)
-			let obj = {
-				cname: "todo-" + ih + "-setter",
-				def: "set " + ih,
-				val: i,
-			}
-			arr.push(obj);
-		}
-		return arr;
-	}
-}
+  createEdits() {
+    const arr = [];
+    const s = [
+      'tags',
+      'prio',
+      'users',
+      'sub',
+    ];
+    s.forEach(i => arr.push({
+      cname: `todo-${module.exports.hyphenate(i)}-setter`,
+      def: `set ${module.exports.hyphenate(i)}`,
+      val: i,
+    }));
+    return arr;
+  },
+};
