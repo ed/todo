@@ -1,0 +1,82 @@
+html, body {
+	height: 100%;
+	margin: 0px;
+	font-family: 'Josefin Sans', sans-serif;
+}
+
+#app {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	font-family: sans-serif;
+	font-size: 1.5rem;
+	line-height: 100%;
+
+}
+
+a {
+	display:        flex;
+	flex-grow:      1;
+	flex-shrink:    1;
+	color: inherit;
+	font-family: 'Josefin Sans', sans-serif;
+	text-decoration: none;
+}
+
+ul
+{
+	list-style-type: none;
+}
+
+#setting {
+	opacity: 0;
+	transition-duration: .7s;
+}
+
+textarea {
+	resize: none;
+	width: 100%;
+	height: 20px;
+	border: none;
+	outline: none;
+	flex-flow: column wrap;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: 18px;
+	border-bottom: 1px solid transparent;
+	transition-duration: 1s;
+}
+
+textarea:focus {
+	border-bottom: 1px solid #272727;
+	transition-duration: .7s;
+}
+
+#nav-panel {
+	color: #e9e9e9;
+	background: #2f2c2f;
+	font-size: 30px;
+	padding: 7px;
+}
+
+.edittrans-enter {
+  opacity: 0.01;
+}
+
+.edittrans-enter.edittrans-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+
+.edittrans-leave {
+  opacity: 1;
+}
+
+.edittrans-leave.edittrans-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in-out;
+}

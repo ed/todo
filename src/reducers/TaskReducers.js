@@ -13,6 +13,9 @@ export default function taskReducer(state=List(), action) {
 					time: action.time,
 					dueDate: action.dueDate,
 					tags: action.tags,
+					prio: action.prio,
+					users: action.users,
+					sub: action.sub,
                     done: false})
             );
         case DELETE_TASK:
@@ -22,13 +25,6 @@ export default function taskReducer(state=List(), action) {
             for (var keys in action.obj) {
                 state = state.update(temp, map => map.set(keys, action.obj[keys]))
             }
-            return state;
-        case CREATE_LIST:
-            return state.push(OrderedMap({[action.name]: List()}))
-        case DELETE_SECTION_ITEM:
-            let secItem = state.findIndex(map => map.get(action.name));
-            secItem = state.get(temp2).get(action.name);
-            secItem = secItem.filter( map => map.get('id') !== action.id ); 
             return state;
         case MOVE_TO:
             let temp2 = state.findIndex(map => map.get(action.id));

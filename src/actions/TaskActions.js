@@ -13,6 +13,7 @@ export const addTask = (name, task) => {
         location: 'main',
 		time: '',
 		prio: '',
+		sub: '',
 		users: '',
 		dueDate: '',
 		tags: ''

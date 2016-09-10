@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
-import 'css/style.css';
-import App from 'containers/TaskContainer'
+import 'css/styles.css';
+import App from 'containers/App'
 import TaskReducer from 'reducers/TaskReducers'
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
