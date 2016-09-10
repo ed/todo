@@ -58,9 +58,9 @@ export default class Todo extends React.Component {
         } else {
           this.props.actions.editTodo(this.state.id, temp);
         }
-        if (this.state.editView === true) {
-          const idx = this.props.editList.findIndex(ptr => ptr.val === [e.target.id]);
-          if (idx + 1 === this.props.editList.length) {
+        if (this.state.editView == true) {
+          const idx = this.props.editList.findIndex(ptr => ptr.val == [e.target.id]);
+          if (idx + 1 == this.props.editList.length) {
             document.getElementById(this.props.editList[idx].val).focus();
           } else if (idx + 1 < this.props.editList.length) {
             document.getElementById(this.props.editList[idx + 1].val).focus();
