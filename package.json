@@ -1,6 +1,6 @@
 {
   "name": "todo",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "todo app",
   "scripts": {
     "start": "./node_modules/.bin/nodemon server.js",
@@ -26,8 +26,6 @@
     "html-webpack-plugin": "^2.22.0",
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
-    "react-addons-shallow-compare": "^15.3.1",
-    "react-dates": "^2.1.1",
     "react-dom": "^15.3.1",
     "react-transform-hmr": "^1.0.4",
     "redux": "^3.5.2",
