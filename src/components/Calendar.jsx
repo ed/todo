@@ -5,7 +5,6 @@ import { createTimeInterval, getMonth } from '../utils/TimeUtils';
 const moment = require('moment');
 const Immutable = require('immutable');
 
-
 export default class Calendar extends Component {
   constructor(props) {
     super(props);
@@ -14,9 +13,13 @@ export default class Calendar extends Component {
       formatted: '',
       dateid: '',
       time: '',
+      month: moment().month(),
+      year: moment().year(),
     };
     this.onClick = this.onClick.bind(this);
     this.onSelect = this.onSelect.bind(this);
+    this.prevMonth = this.prevMonth.bind(this);
+    this.nextMonth = this.nextMonth.bind(this);
     this.renderDates(moment());
     this.renderTime();
   }
@@ -39,53 +42,68 @@ export default class Calendar extends Component {
 
   renderDates(date) {
     const currentMonth = getMonth(date);
-    const month = [...Array(7).fill([])];
+    const month = [...Array(5).fill([])];
     const keys = [...month.keys()];
     this.calendar = Immutable.fromJS(month);
     keys.map(
-      day => currentMonth.reduce(
-        (prev,elem) => day === elem.day() ? this.calendar = this.calendar.update(
-          elem.day(), s => s.push(elem)) : ''));
+      week => currentMonth.slice(week*7, (week+1)*7).map((day, idx) => 
+        this.calendar = this.calendar.update(week, s => s.push(day))))
   }
 
   renderTime() {
     this.time = createTimeInterval();
   }
 
+  nextMonth() {
+    const next = moment().set('year', this.state.year).set('month', this.state.month).startOf('month').add(1, 'month')
+    this.setState({month: next.month(), year: next.year()})
+    this.renderDates(next);
+  }
+
+  prevMonth() {
+    const prev = moment().set('year', this.state.year).set('month', this.state.month).startOf('month').add(-1, 'month')
+    this.setState({month: prev.month(), year: prev.year()})
+    this.renderDates(prev);
+  }
+
   render() {
     return (
       <div>
-        <ul>
-          {this.calendar.map((value, idx) =>
-            <li
-              key={idx}
-              style={{
-                height: '30px',
-                width: '30px',
-                lineHeight: '30px',
-                float: 'left',
-                whiteSpace: 'pre-wrap',
-                padding: '0px',
-              }}
-            >
-              {moment().day(idx).format('dd')} {'\n'}
-              {value.map(s =>
-                <Day
-                  key={`${idx}${value.indexOf(s)}`}
-                  id={`${s.dayOfYear()}${s.format('YYYY')}`}
-                  value={s.format('DD')}
-                  onClick={(e) => this.onClick(e)}
-                  chosen={`${s.dayOfYear()}${s.format('YYYY')}` === this.state.dateid}
-                />
+        <span >
+          <button onClick={this.prevMonth} value='<'>{'<'}</button>
+          {`${moment().month(this.state.month).format('MMMM')}  ${this.state.year}`}
+          <button onClick={this.nextMonth} value='>'>{'>'}</button>
+        </span>
+        <table>
+          <tbody>
+            <tr>
+              {[...Array(7).keys()].map(s => 
+                <td key={`h${s}`}>
+                  {`${moment().day(s).format('dd')}`}
+                </td>
               )}
-            </li>
-          )}
-        </ul>
+            </tr>
+            {this.calendar.map((value, idx) =>
+              <tr key={idx}>
+                {value.map(s => 
+                  <Day 
+                    value={s.date()}
+                    id= {`${s.dayOfYear()}${s.year()}`}
+                    k={`${s.dayOfYear()}${idx}`}
+                    key={`${s.dayOfYear()}${idx}`}
+                    chosen={ this.state.dateid === `${s.dayOfYear()}${s.year()}`}
+                    onClick={this.onClick}
+                  />
+                )}
+              </tr>
+            )}
+          </tbody>
+        </table>
         <div style={{ whiteSpace: 'pre-wrap' }}>
           <input value={`${this.state.formatted} ${this.state.time}`} />
           {'\n'}
           <select onChange={(e) => this.onSelect(e)} value={this.state.time}>
-            {this.time.map(t => <option value={t}>{t}</option>)}
+            {this.time.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
       </div>
@@ -95,17 +113,19 @@ export default class Calendar extends Component {
 
 
 const Day = (props) =>
-  <span
+  <td
     id={props.id}
-    style={props.chosen ? { color: 'blue' } : { color: 'black' }}
+    key={props.k}
+    style={props.chosen ? { color : 'blue' } : { color : 'black' }}
     onClick={props.onClick}
   >
-    {props.value}{'\n'}
-  </span>;
+    {props.value}
+  </td>;
 Day.propTypes = {
   onClick: React.PropTypes.func,
   chosen: React.PropTypes.boolean,
   id: React.PropTypes.string,
-  value: React.PropTypes.string,
+  k: React.PropTypes.string,
+  value: React.PropTypes.number,
 };
 

@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import * as TaskActions from '../actions/TaskActions';
 import Todo from '../components/Todo';
+import Calendar from '../components/Calendar';
 import { bindActionCreators } from 'redux';
 import { createEdits } from '../utils/GeneralUtils'
 import { createTimeInterval, agenda } from '../utils/TimeUtils'
@@ -18,7 +19,8 @@ class TaskContainer extends Component {
 		const currentWeek = agenda();
 		const timeList = createTimeInterval();
 		return (
-			<Todo actions={actions} tasks={tasks} editList={editList} currentWeek={currentWeek} timeList={timeList}/>
+      <Calendar />
+			// <Todo actions={actions} tasks={tasks} editList={editList} currentWeek={currentWeek} timeList={timeList}/>
 		)
 	}
 }
