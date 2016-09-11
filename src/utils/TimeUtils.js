@@ -26,5 +26,22 @@ module.exports = {
 			time.push(i+":30pm")
 		}
 		return time;
+	},
+
+	getMonth(mo) {
+		const start = mo.startOf('month');
+		let day = start.clone();
+		const end = mo.endOf('month');
+		let month = []
+		day = day.startOf('week');
+		month.push(day.clone());
+		while(day.dayOfYear() != end.endOf('week').dayOfYear()) {
+			month.push(day.clone());
+			day = day.add(1, 'day');
+		}
+		month.push(end.endOf('week'));
+		return month;
 	}
+
+
 }
