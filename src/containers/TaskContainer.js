@@ -19,8 +19,7 @@ class TaskContainer extends Component {
 		const currentWeek = agenda();
 		const timeList = createTimeInterval();
 		return (
-      <Calendar />
-			// <Todo actions={actions} tasks={tasks} editList={editList} currentWeek={currentWeek} timeList={timeList}/>
+			<Todo actions={actions} tasks={tasks} editList={editList} currentWeek={currentWeek} timeList={timeList}/>
 		)
 	}
 }

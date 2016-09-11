@@ -33,11 +33,13 @@ export default class Calendar extends Component {
       formatted: moment().set('year', year).dayOfYear(day).format('MM DD YY'),
       selected: moment().set('year', year).dayOfYear(day),
     });
+    this.props.update(moment().set('year', year).dayOfYear(day).format('MM DD YY'), this.state.time);
   }
 
   onSelect(e) {
     e.preventDefault();
     this.setState({ time: e.target.value });
+    this.props.update(this.state.formatted, e.target.value);
   }
 
   renderDates(date) {
@@ -99,12 +101,13 @@ export default class Calendar extends Component {
             )}
           </tbody>
         </table>
-        <div style={{ whiteSpace: 'pre-wrap' }}>
-          <input value={`${this.state.formatted} ${this.state.time}`} />
-          {'\n'}
+        <div style={{float:'left'}}>
           <select onChange={(e) => this.onSelect(e)} value={this.state.time}>
             {this.time.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
+        </div>
+        <div style={{float:'left'}}>
+          <button value="submit" onClick={this.props.handleTimeEdit}>{'submit'}</button>
         </div>
       </div>
     );

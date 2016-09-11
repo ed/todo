@@ -40,12 +40,10 @@ textarea {
 	text-overflow: ellipsis;
 	font-family: 'Roboto', sans-serif;
 	font-size: 18px;
-	border-bottom: 1px solid transparent;
 	transition-duration: 1s;
 }
 
 textarea:focus {
-	border-bottom: 1px solid #272727;
 	transition-duration: .7s;
 }
 
@@ -56,20 +54,38 @@ textarea:focus {
 	padding: 7px;
 }
 
-.edittrans-enter {
+.edit-trans-enter {
   opacity: 0.01;
 }
 
-.edittrans-enter.edittrans-enter-active {
+.edit-trans-enter.edit-trans-enter-active {
   opacity: 1;
   transition: opacity 500ms ease-in-out;
 }
 
-.edittrans-leave {
+.edit-trans-leave {
   opacity: 1;
 }
 
-.edittrans-leave.edittrans-leave-active {
+.edit-trans-leave.edit-trans-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in-out;
+}
+
+.calendar-trans-enter {
+  opacity: 0.01;
+}
+
+.calendar-trans-enter.calendar-trans-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+
+.calendar-trans-leave {
+  opacity: 1;
+}
+
+.calendar-trans-leave.calendar-trans-leave-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in-out;
 }

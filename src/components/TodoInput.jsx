@@ -1,4 +1,5 @@
 import React from 'react';
+import colors from '../constants/colors'
 
 export default class TodoInput extends React.Component {
   constructor(props) {
@@ -27,10 +28,10 @@ export default class TodoInput extends React.Component {
   }
 
   render() {
-    const { k, id, name, onClick } = this.props;
+    const { k, id, name, onClick, done } = this.props;
     return (
       <textarea
-        style={{ borderBottom: 'none' }}
+        style={ done ? { color : colors.color.blue } : {color: 'black'}}
         key={k}
         id={id}
         onClick={onClick}

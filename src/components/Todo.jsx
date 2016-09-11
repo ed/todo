@@ -1,5 +1,10 @@
 import React from 'react';
-
+import colors from '../constants/colors'
+import Calendar from './Calendar';
+import IoCalendar from 'react-icons/lib/io/calendar';
+import IoTrash from 'react-icons/lib/io/trash-a';
+import IoClose from 'react-icons/lib/io/close-circled';
+import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import TodoInput from './TodoInput';
 
 const Immutable = require('immutable');
@@ -21,17 +26,22 @@ export default class Todo extends React.Component {
       name: '',
       id: '',
       dueDate: '',
+      dateSetter: false,
       tags: '',
-      time: '',
       prio: '',
       users: '',
       sub: '',
+      done: false,
     };
     this.onClick = this.onClick.bind(this);
     this.editOff = this.editOff.bind(this);
+    this.toggle = this.toggle.bind(this);
+    this.toggleDone = this.toggleDone.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.updateTime = this.updateTime.bind(this);
+    this.editTime = this.editTime.bind(this);
   }
 
 
@@ -85,6 +95,7 @@ export default class Todo extends React.Component {
       prio: temp.get('prio'),
       users: temp.get('users'),
       sub: temp.get('sub'),
+      done: temp.get('done'),
     });
     this.setState({ editView: true });
   }
@@ -93,6 +104,9 @@ export default class Todo extends React.Component {
     this.setState({ editView: false });
   }
 
+  toggle(e) {
+    this.setState({[e.target.id] : !this.state[e.target.id]})
+  }
 
   todos() {
     const todos = this.props.tasks.entrySeq().map(([key, value]) =>
@@ -100,6 +114,7 @@ export default class Todo extends React.Component {
         key={value.get('id')}
         k={value.get('id')}
         type={"todo"}
+        done={this.state.done}
         id={key}
         update={this.handleNameUpdate.bind(this)} 
         onClick={(e) => this.onClick(e)}
@@ -113,7 +128,8 @@ export default class Todo extends React.Component {
     const edits = this.props.editList.map((obj, key) =>
       <textarea
         className={obj.cname}
-        key={key} id={obj.val}
+        key={key} 
+        id={obj.val}
         value={this.state[obj.val]}
         placeholder={obj.def}
         maxLength="20"
@@ -127,6 +143,26 @@ export default class Todo extends React.Component {
     e.preventDefault();
     this.props.actions.deleteTask(this.state.id);
     this.setState({ editView: false });
+  }
+
+  updateTime(d, t) {
+    this.setState({dueDate: `${d} ${t}`})
+  }
+
+  editTime() {
+    const time = {
+      dueDate: this.state.dueDate
+    }
+    this.props.actions.editTodo(this.state.id, time);
+    this.setState({ dateSetter: false });
+  }
+
+  toggleDone() {
+    const done = {
+      done: !this.state.done
+    }
+    this.setState({done: !this.state.done})
+    this.props.actions.editTodo(this.state.id, done);
   }
 
   render() {
@@ -153,13 +189,24 @@ export default class Todo extends React.Component {
           </div>
           <div className="Grid-cell">
             <ReactCSSTransitionGroup
-              transitionName="edittrans"
+              transitionName="edit-trans"
               transitionEnterTimeout={500}
               transitionLeaveTimeout={300}
             >
               {this.state.editView ?
                 <div>
-                <button onClick={this.editOff} value='close'/>
+                  <IoClose onClick={this.editOff} />
+                  <IoCheckmark onClick={this.toggleDone} color={colors.color.green}/>
+                  <IoCalendar id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
+                  <IoTrash onClick={this.handleDelete} color={colors.color.red}/>
+                  <ReactCSSTransitionGroup
+                    transitionName="calendar-trans"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={300}
+                  >
+                  {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
+                </ReactCSSTransitionGroup>
+                <textarea readOnly placeholder="due date" value={this.state.dueDate}/>
               <TodoEdit
                 edits={edits}
                 name={this.state.name}
@@ -174,7 +221,7 @@ export default class Todo extends React.Component {
   }
 }
 
-const TodoEdit = (props) => <div><p>{props.name}</p>{props.edits}</div>;
+const TodoEdit = (props) => <div>{props.name}{props.edits}</div>;
 TodoEdit.propTypes = {
   name: React.PropTypes.string,
   edits: React.PropTypes.array,
