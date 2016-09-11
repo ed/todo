@@ -11,7 +11,7 @@ export default class Calendar extends Component {
     this.state = {
       selected: '',
       formatted: '',
-      dateid: '',
+      dateid: `${moment().dayOfYear()}${moment().year()}`,
       time: '',
       month: moment().month(),
       year: moment().year(),
@@ -22,6 +22,7 @@ export default class Calendar extends Component {
     this.nextMonth = this.nextMonth.bind(this);
     this.renderDates(moment());
     this.renderTime();
+    this.props.update(moment().format('MM DD YYYY'), this.state.time);
   }
 
   onClick(e) {
