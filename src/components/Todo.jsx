@@ -31,10 +31,12 @@ export default class Todo extends React.Component {
       prio: '',
       users: '',
       sub: '',
+      num: 0,
       done: false,
     };
     this.onClick = this.onClick.bind(this);
     this.editOff = this.editOff.bind(this);
+    this.editId = this.editId.bind(this);
     this.toggle = this.toggle.bind(this);
     this.toggleDone = this.toggleDone.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -44,7 +46,6 @@ export default class Todo extends React.Component {
     this.editTime = this.editTime.bind(this);
   }
 
-
   onChange(e) {
     e.preventDefault();
     this.setState({ [e.target.id]: e.target.value });
@@ -52,6 +53,13 @@ export default class Todo extends React.Component {
 
   handleNameUpdate(value) {
     this.setState({ name: value });
+  }
+
+  componentDidUpdate() {
+    if (this.props.tasks.size > this.state.num) {
+      this.editId(this.props.tasks.size-1);
+      this.setState({ num: this.state.num+1 });
+    }
   }
 
   onKeyDown(e) {
@@ -68,7 +76,7 @@ export default class Todo extends React.Component {
         } else {
           this.props.actions.editTodo(this.state.id, temp);
         }
-        if (this.state.editView == true) {
+        if (this.state.editView == true && [e.target.id] != 'inputTodo') {
           const idx = this.props.editList.findIndex(ptr => ptr.val == [e.target.id]);
           if (idx + 1 == this.props.editList.length) {
             document.getElementById(this.props.editList[idx].val).focus();
@@ -83,10 +91,25 @@ export default class Todo extends React.Component {
     }
   }
 
-
   onClick(e) {
     e.preventDefault();
     const temp = this.props.tasks.get(e.target.id);
+    this.setState({
+      id: temp.get('id'),
+      name: temp.get('name'),
+      dueDate: temp.get('dueDate'),
+      tags: temp.get('tags'),
+      prio: temp.get('prio'),
+      users: temp.get('users'),
+      sub: temp.get('sub'),
+      done: temp.get('done'),
+    });
+    this.setState({ editView: true });
+  }
+
+
+  editId(id) {
+    const temp = this.props.tasks.get(id);
     this.setState({
       id: temp.get('id'),
       name: temp.get('name'),
@@ -172,58 +195,58 @@ export default class Todo extends React.Component {
       <div className="Grid Grid--flexCells">
         <div className="Grid-cell u-1of4" id="nav-panel" style={{background: 'white' }}>
         </div>
-          <div className="Grid-cell u-1of2">
-            <div className="Aligner" style={{width: "100%"}}>
-              <div className="Aligner-item Aligner-item--fixed">
-                <textarea
-                  autoFocus
-                  className="todo-name-setter"
-                  id="inputTodo"
-                  maxLength={30}
-                  ref={(c) => this._input = c}
-                  value={this.state.inputTodo}
-                  onChange={this.onChange}
-                  onKeyDown={this.onKeyDown}
-                  placeholder="add todo"
-                  style={{textAlign: 'center'}}
-                />
-                {todos}
-              </div>
+        <div className="Grid-cell u-1of2">
+          <div className="Aligner" style={{width: "100%"}}>
+            <div className="Aligner-item Aligner-item--fixed">
+              <textarea
+                autoFocus
+                className="todo-name-setter"
+                id="inputTodo"
+                maxLength={30}
+                ref={(c) => this._input = c}
+                value={this.state.inputTodo}
+                onChange={this.onChange}
+                onKeyDown={this.onKeyDown}
+                placeholder="add todo"
+                style={{textAlign: 'center'}}
+              />
+              {todos}
             </div>
           </div>
-          <div className="Grid-cell u-1of4">
-            <div className="Aligner" style={{width: "100%"}}>
-              <div className="Aligner-item Aligner-item--fixed">
-            <ReactCSSTransitionGroup
-              transitionName="edit-trans"
-              transitionEnterTimeout={500}
-              transitionLeaveTimeout={300}
-            >
-              {this.state.editView ?
-                <div>
-                  <IoClose onClick={this.editOff} />
-                  <IoCheckmark onClick={this.toggleDone} color={colors.color.green}/>
-                  <IoCalendar id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
-                  <IoTrash onClick={this.handleDelete} color={colors.color.red}/>
-                  <ReactCSSTransitionGroup
-                    transitionName="calendar-trans"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={300}
-                  >
-                  {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
-                </ReactCSSTransitionGroup>
-                <textarea readOnly placeholder="due date" value={this.state.dueDate}/>
-              <TodoEdit
-                edits={edits}
-                name={this.state.name}
-              /> 
-              </div>
-              : null}
-            </ReactCSSTransitionGroup>
-          </div>
-              </div>
-            </div>
         </div>
+        <div className="Grid-cell u-1of4">
+          <div className="Aligner" style={{width: "100%"}}>
+            <div className="Aligner-item Aligner-item--fixed">
+              <ReactCSSTransitionGroup
+                transitionName="edit-trans"
+                transitionEnterTimeout={500}
+                transitionLeaveTimeout={300}
+              >
+                {this.state.editView ?
+                  <div>
+                    <IoClose onClick={this.editOff} onKeyPress={this.editOff} />
+                    <IoCheckmark onClick={this.toggleDone} color={colors.color.green}/>
+                    <IoCalendar id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
+                    <IoTrash onClick={this.handleDelete} color={colors.color.red}/>
+                    <ReactCSSTransitionGroup
+                      transitionName="calendar-trans"
+                      transitionEnterTimeout={500}
+                      transitionLeaveTimeout={300}
+                    >
+                      {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
+                    </ReactCSSTransitionGroup>
+                    <textarea readOnly placeholder="due date" value={this.state.dueDate}/>
+                    <TodoEdit
+                      edits={edits}
+                      name={this.state.name}
+                    /> 
+                  </div>
+                    : null}
+                  </ReactCSSTransitionGroup>
+                </div>
+              </div>
+            </div>
+          </div>
     );
   }
 }
