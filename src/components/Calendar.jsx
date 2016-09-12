@@ -73,13 +73,13 @@ export default class Calendar extends Component {
   render() {
     return (
       <div>
-        <span style={{color: colors.color.orange, whiteSpace: 'nowrap'}}>
-          <button onClick={this.prevMonth} value='<'>{'<'}</button>
+        <span style={{fontSize: '12', color: colors.color.darkgrey, whiteSpace: 'nowrap'}}>
+          <button style={{float: 'left'}} onClick={this.prevMonth} value='<'>{'<'}</button>
           {`${moment().month(this.state.month).format('MMMM')}  ${this.state.year}`}
-          <button onClick={this.nextMonth} value='>'>{'>'}</button>
+          <button style={{float: 'right'}} onClick={this.nextMonth} value='>'>{'>'}</button>
         </span>
-        <table>
-          <tbody style={{textAlign: 'center'}}>
+        <table style={{width: '100%'}}>
+          <tbody style={{fontSize: '11', textAlign: 'center'}}>
             <tr>
               {[...Array(7).keys()].map(s => 
                 <td style={{color: colors.color.orange}} key={`h${s}`}>
@@ -108,7 +108,7 @@ export default class Calendar extends Component {
             {this.time.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
-        <div style={{float:'left'}}>
+        <div style={{float:'right'}}>
           <button value="submit" onClick={this.props.handleTimeEdit}>{'submit'}</button>
         </div>
       </div>

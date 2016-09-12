@@ -227,13 +227,10 @@ export default class Todo extends React.Component {
                 {this.state.editView ?
                   <div style={{textAlign: 'center'}}>
                     <strong><p style={{textAlign: 'center', color: colors.color.darkgrey}}>{this.state.name}</p></strong>
-                    <span style={{padding:'5px' ,margin:'5px'}}>
                     <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
                     <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
                     <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
                     <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
-                  </span>
-                    {'\n'}
                     <ReactCSSTransitionGroup
                       transitionName="calendar-trans"
                       transitionEnterTimeout={500}
