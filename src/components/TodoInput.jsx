@@ -31,7 +31,7 @@ export default class TodoInput extends React.Component {
     const { k, id, name, onClick, done } = this.props;
     return (
       <textarea
-        style={ done ? { color : colors.color.blue } : {color: 'black'}, {textAlign: "center"} }
+        style={{color: colors.color.darkgrey, textAlign: "center"}}
         key={k}
         id={id}
         onClick={onClick}

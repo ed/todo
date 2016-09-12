@@ -14,7 +14,7 @@ module.exports = {
 	},
 
 	createTimeInterval: function() {
-		let time = ["12:00am", "12:30am"]
+		let time = ['',"12:00am", "12:30am"]
 		for (var i = 1 ; i < 12; i++) {
 			time.push(i+":00am")
 			time.push(i+":30am")

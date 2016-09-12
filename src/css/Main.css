@@ -24,6 +24,7 @@ textarea {
 	text-overflow: ellipsis;
 	font-family: 'Roboto', sans-serif;
 	font-size: 18px;
+	color: '#A19585';
 	transition-duration: 1s;
 	height: 25px;
 }
@@ -71,4 +72,19 @@ textarea:focus {
 .calendar-trans-leave.calendar-trans-leave-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in-out;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    #CCDDEE;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #CCDDEE;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #CCDDEE;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:    #CCDDEE;
 }

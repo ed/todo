@@ -73,7 +73,7 @@ export default class Calendar extends Component {
   render() {
     return (
       <div>
-        <span style={{whiteSpace: 'nowrap'}}>
+        <span style={{color: colors.color.orange, whiteSpace: 'nowrap'}}>
           <button onClick={this.prevMonth} value='<'>{'<'}</button>
           {`${moment().month(this.state.month).format('MMMM')}  ${this.state.year}`}
           <button onClick={this.nextMonth} value='>'>{'>'}</button>
@@ -82,7 +82,7 @@ export default class Calendar extends Component {
           <tbody style={{textAlign: 'center'}}>
             <tr>
               {[...Array(7).keys()].map(s => 
-                <td key={`h${s}`}>
+                <td style={{color: colors.color.orange}} key={`h${s}`}>
                   {`${moment().day(s).format('dd')}`}
                 </td>
               )}
