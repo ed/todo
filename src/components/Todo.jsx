@@ -138,7 +138,7 @@ export default class Todo extends React.Component {
         key={value.get('id')}
         k={value.get('id')}
         type={"todo"}
-        done={this.state.done}
+        done={value.get('done')}
         id={key}
         update={this.handleNameUpdate.bind(this)} 
         onClick={(e) => this.onClick(e)}
