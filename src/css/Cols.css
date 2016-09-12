@@ -24,6 +24,11 @@
   flex: none !important;
 }
 
+.u-15p {
+  width: 15% !important;
+  flex: none !important;
+}
+
 .u-3of4 {
   width: 75% !important;
   flex: none !important;

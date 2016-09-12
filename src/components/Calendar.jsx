@@ -72,7 +72,7 @@ export default class Calendar extends Component {
   render() {
     return (
       <div>
-        <span >
+        <span style={{whiteSpace: 'no-wrap'}}>
           <button onClick={this.prevMonth} value='<'>{'<'}</button>
           {`${moment().month(this.state.month).format('MMMM')}  ${this.state.year}`}
           <button onClick={this.nextMonth} value='>'>{'>'}</button>

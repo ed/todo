@@ -170,24 +170,30 @@ export default class Todo extends React.Component {
     const edits = this.edits();
     return (
       <div className="Grid Grid--flexCells">
-        <div className="Grid-cell u-1of4" id="nav-panel">
-          sidebar
+        <div className="Grid-cell u-1of4" id="nav-panel" style={{background: 'white' }}>
         </div>
-        <div className="Grid-cell" style={{ padding: '10px' }}>
-          <div className="Grid-cell">
-            <textarea
-              className="todo-name-setter"
-              id="inputTodo"
-              maxLength={30}
-              ref={(c) => this._input = c}
-              value={this.state.inputTodo}
-              onChange={this.onChange}
-              onKeyDown={this.onKeyDown}
-              placeholder="event name"
-            />
-            {todos}
+          <div className="Grid-cell u-1of2">
+            <div className="Aligner" style={{width: "100%"}}>
+              <div className="Aligner-item Aligner-item--fixed">
+                <textarea
+                  autoFocus
+                  className="todo-name-setter"
+                  id="inputTodo"
+                  maxLength={30}
+                  ref={(c) => this._input = c}
+                  value={this.state.inputTodo}
+                  onChange={this.onChange}
+                  onKeyDown={this.onKeyDown}
+                  placeholder="add todo"
+                  style={{textAlign: 'center'}}
+                />
+                {todos}
+              </div>
+            </div>
           </div>
-          <div className="Grid-cell">
+          <div className="Grid-cell u-1of4">
+            <div className="Aligner" style={{width: "100%"}}>
+              <div className="Aligner-item Aligner-item--fixed">
             <ReactCSSTransitionGroup
               transitionName="edit-trans"
               transitionEnterTimeout={500}
@@ -215,8 +221,9 @@ export default class Todo extends React.Component {
               : null}
             </ReactCSSTransitionGroup>
           </div>
+              </div>
+            </div>
         </div>
-      </div>
     );
   }
 }
