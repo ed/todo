@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import colors from '../constants/colors'
 
 import { createTimeInterval, getMonth } from '../utils/TimeUtils';
 
@@ -72,13 +73,13 @@ export default class Calendar extends Component {
   render() {
     return (
       <div>
-        <span style={{whiteSpace: 'no-wrap'}}>
+        <span style={{whiteSpace: 'nowrap'}}>
           <button onClick={this.prevMonth} value='<'>{'<'}</button>
           {`${moment().month(this.state.month).format('MMMM')}  ${this.state.year}`}
           <button onClick={this.nextMonth} value='>'>{'>'}</button>
         </span>
         <table>
-          <tbody>
+          <tbody style={{textAlign: 'center'}}>
             <tr>
               {[...Array(7).keys()].map(s => 
                 <td key={`h${s}`}>
@@ -120,7 +121,7 @@ const Day = (props) =>
   <td
     id={props.id}
     key={props.k}
-    style={props.chosen ? { color : 'blue' } : { color : 'black' }}
+    style={props.chosen ? { background: colors.color.lightgrey } : { background: 'white', color: colors.color.blue }}
     onClick={props.onClick}
   >
     {props.value}
