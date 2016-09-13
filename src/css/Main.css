@@ -74,6 +74,25 @@ textarea:focus {
   transition: opacity 300ms ease-in-out;
 }
 
+
+.todo-trans-enter {
+  opacity: 0.01;
+}
+
+.todo-trans-enter.todo-trans-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+
+.todo-trans-leave {
+  opacity: 1;
+}
+
+.todo-trans-leave.todo-trans-leave-active {
+  opacity: 0.01;
+  transition: opacity 200ms ease-in-out;
+}
+
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color:    #CCDDEE;
 }
@@ -88,3 +107,7 @@ textarea:focus {
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
    color:    #CCDDEE;
 }
+
+text-decoration-color: #FF7777;
+
+

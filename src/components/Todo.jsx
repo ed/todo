@@ -211,8 +211,14 @@ export default class Todo extends React.Component {
                 onKeyDown={this.onKeyDown}
                 placeholder="add todo"
                 style={{color: colors.color.darkgrey, textAlign: "center"}}
-              />
+			/>
+              <ReactCSSTransitionGroup
+                transitionName="todo-trans"
+                transitionEnterTimeout={200}
+                transitionLeaveTimeout={200}
+              >
               {todos}
+              </ReactCSSTransitionGroup>
             </div>
           </div>
         </div>
