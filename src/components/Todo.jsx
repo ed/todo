@@ -125,7 +125,7 @@ export default class Todo extends React.Component {
   }
 
   editOff() {
-    this.setState({ editView: false });
+    this.setState({ editView: false, dateSetter: false });
   }
 
   toggle(e) {
@@ -167,7 +167,7 @@ export default class Todo extends React.Component {
   handleDelete(e) {
     e.preventDefault();
     this.props.actions.deleteTask(this.state.id);
-    this.setState({ editView: false });
+    this.setState({ editView: false, dateSetter: false });
   }
 
   updateTime(d, t) {
