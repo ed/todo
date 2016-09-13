@@ -129,7 +129,7 @@ export default class Todo extends React.Component {
   }
 
   editOff() {
-    this.setState({ editView: false });
+    this.setState({ editView: false, dateSetter: false });
   }
 
   toggle(e) {
@@ -168,6 +168,7 @@ export default class Todo extends React.Component {
     return edits;
   }
 
+<<<<<<< HEAD
   week() {
     const sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time'))));
     const week = this.props.currentWeek.map((day, idx) =>
@@ -181,6 +182,13 @@ export default class Todo extends React.Component {
         );
   return week;
 }
+=======
+  handleDelete(e) {
+    e.preventDefault();
+    this.props.actions.deleteTask(this.state.id);
+    this.setState({ editView: false, dateSetter: false });
+  }
+>>>>>>> 996f45208052e53783f13cde78ff83432628877a
 
 handleDelete(e) {
   e.preventDefault();
