@@ -6,6 +6,7 @@ import IoTrash from 'react-icons/lib/io/trash-a';
 import IoClose from 'react-icons/lib/io/close-circled';
 import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import TodoInput from './TodoInput';
+import { tttf } from '../utils/TimeUtils'
 
 const Immutable = require('immutable');
 const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
@@ -26,6 +27,7 @@ export default class Todo extends React.Component {
       name: '',
       id: '',
       dueDate: '',
+      time: '',
       dateSetter: false,
       tags: '',
       prio: '',
@@ -58,7 +60,6 @@ export default class Todo extends React.Component {
   componentDidUpdate() {
     if (this.props.tasks.size > this.state.num) {
       this.editId(this.props.tasks.size-1);
-      this.setState({ num: this.state.num+1 });
     }
   }
 
@@ -98,6 +99,7 @@ export default class Todo extends React.Component {
       id: temp.get('id'),
       name: temp.get('name'),
       dueDate: temp.get('dueDate'),
+      time: temp.get('time'),
       tags: temp.get('tags'),
       prio: temp.get('prio'),
       users: temp.get('users'),
@@ -114,13 +116,15 @@ export default class Todo extends React.Component {
       id: temp.get('id'),
       name: temp.get('name'),
       dueDate: temp.get('dueDate'),
+      time: temp.get('time'),
       tags: temp.get('tags'),
       prio: temp.get('prio'),
       users: temp.get('users'),
       sub: temp.get('sub'),
       done: temp.get('done'),
+      num: this.state.num+1,
+      editView: true,
     });
-    this.setState({ editView: true });
     document.getElementById(id).focus();
   }
 
@@ -164,96 +168,119 @@ export default class Todo extends React.Component {
     return edits;
   }
 
-  handleDelete(e) {
-    e.preventDefault();
-    this.props.actions.deleteTask(this.state.id);
-    this.setState({ editView: false });
-  }
+  week() {
+    const sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time'))));
+    const week = this.props.currentWeek.map((day, idx) =>
+      <ul key={`day${idx}`}> {day}{'\n'}
+        {sorted.filter(task => task.get('dueDate').split(' ')[0] == day && task.get('done') == false).entrySeq().map(([key,obj]) => 
+          <li style={{color: colors.color.blue}}>
+            {`${obj.get('time')} ${obj.get('name')}`}
+          </li>
+          )}
+      </ul>
+        );
+  return week;
+}
 
-  updateTime(d, t) {
-    this.setState({dueDate: `${d} ${t}`})
-  }
+handleDelete(e) {
+  e.preventDefault();
+  this.props.actions.deleteTask(this.state.id);
+  this.setState({ editView: false });
+}
 
-  editTime() {
-    const time = {
-      dueDate: this.state.dueDate
-    }
-    this.props.actions.editTodo(this.state.id, time);
-    this.setState({ dateSetter: false });
-  }
+updateTime(d, t) {
+  this.setState({dueDate: d, time: t})
+}
 
-  toggleDone() {
-    const done = {
-      done: !this.state.done
-    }
-    this.setState({done: !this.state.done})
-    this.props.actions.editTodo(this.state.id, done);
+editTime() {
+  const time = {
+    time: this.state.time,
+    dueDate: this.state.dueDate
   }
+  this.props.actions.editTodo(this.state.id, time);
+  this.setState({ dateSetter: false });
+}
 
-  render() {
-    const todos = this.todos();
-    const edits = this.edits();
-    return (
-      <div className="Grid Grid--flexCells">
-        <div className="Grid-cell u-1of4" id="nav-panel" style={{background: 'white' }}>
-        </div>
-        <div className="Grid-cell u-1of2">
-          <div className="Aligner" style={{width: "100%"}}>
-            <div className="Aligner-item Aligner-item--fixed">
-              <textarea
-                autoFocus
-                className="todo-name-setter"
-                id="inputTodo"
-                maxLength={30}
-                ref={(c) => this._input = c}
-                value={this.state.inputTodo}
-                onChange={this.onChange}
-                onKeyDown={this.onKeyDown}
-                placeholder="add todo"
-                style={{color: colors.color.darkgrey, textAlign: "center"}}
-			/>
-              <ReactCSSTransitionGroup
-                transitionName="todo-trans"
-                transitionEnterTimeout={200}
-                transitionLeaveTimeout={200}
-              >
+toggleDone() {
+  const done = {
+    done: !this.state.done
+  }
+  this.setState({done: !this.state.done})
+  this.props.actions.editTodo(this.state.id, done);
+}
+
+render() {
+  const todos = this.todos();
+  const edits = this.edits();
+  const week = this.week();
+  return (
+    <div className="Grid Grid--flexCells">
+      <div className="Grid-cell u-1of4" id="nav-panel" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, }}>
+        <div className="Aligner" style={{width: "100%"}}>
+          <div className="Aligner-item Aligner-item--fixed">
+        <ul>
+          {week}
+        </ul>
+      </div>
+      </div>
+      </div>
+      <div className="Grid-cell u-1of2">
+        <div className="Aligner" style={{width: "100%"}}>
+          <div className="Aligner-item Aligner-item--fixed">
+            <textarea
+              autoFocus
+              className="todo-name-setter"
+              id="inputTodo"
+              maxLength={30}
+              ref={(c) => this._input = c}
+              value={this.state.inputTodo}
+              onChange={this.onChange}
+              onKeyDown={this.onKeyDown}
+              placeholder="add todo"
+              style={{color: colors.color.darkgrey, textAlign: "center"}}
+            />
+            <ReactCSSTransitionGroup
+              transitionName="todo-trans"
+              transitionEnterTimeout={200}
+              transitionLeaveTimeout={200}
+            >
               {todos}
-              </ReactCSSTransitionGroup>
-            </div>
+            </ReactCSSTransitionGroup>
           </div>
         </div>
-        <div className="Grid-cell u-1of4">
-          <div className="Aligner" style={{width: "100%"}}>
-            <div className="Aligner-item Aligner-item--fixed">
-              <ReactCSSTransitionGroup
-                transitionName="edit-trans"
-                transitionEnterTimeout={500}
-                transitionLeaveTimeout={300}
-              >
-                {this.state.editView ?
-                  <div style={{textAlign: 'center'}}>
-                    <strong><p style={{textAlign: 'center', color: colors.color.darkgrey}}>{this.state.name}</p></strong>
-                    <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
-                    <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
-                    <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
-                    <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
-                    <ReactCSSTransitionGroup
-                      transitionName="calendar-trans"
-                      transitionEnterTimeout={500}
-                      transitionLeaveTimeout={300}
-                    >
-                      {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
-                    </ReactCSSTransitionGroup>
-                    <textarea style={{fontSize: '14px', color: colors.color.blue, textAlign: 'center'}} readOnly value={this.state.dueDate}/>
-                    {edits}
-                  </div>
-                    : null}
+      </div>
+      <div className="Grid-cell u-1of4">
+        <div className="Aligner" style={{width: "100%"}}>
+          <div className="Aligner-item Aligner-item--fixed">
+            <ReactCSSTransitionGroup
+              transitionName="edit-trans"
+              transitionEnterTimeout={500}
+              transitionLeaveTimeout={300}
+            >
+              {this.state.editView ?
+                <div style={{textAlign: 'center'}}>
+                  <strong><p style={{textAlign: 'center', color: colors.color.darkgrey}}>{this.state.name}</p></strong>
+                  <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
+                  <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
+                  <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
+                  <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
+                  <ReactCSSTransitionGroup
+                    transitionName="calendar-trans"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={300}
+                  >
+                    {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
                   </ReactCSSTransitionGroup>
+                  <textarea style={{fontSize: '14px', color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.dueDate} ${this.state.time}`}/>
+                  {edits}
                 </div>
+                  : null}
+                </ReactCSSTransitionGroup>
               </div>
             </div>
           </div>
-    );
-  }
+        </div>
+  );
 }
+        }
 

@@ -22,6 +22,7 @@ export default class TodoInput extends React.Component {
 						name: e.target.value.trim(),
 					};
 					this.props.actions.editTodo(this.props.k, temp);
+					this.props.actions.addTask('', 'todo');
 					this.props.update(e.target.value.trim());
 				}
 			}

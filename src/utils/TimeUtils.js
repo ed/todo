@@ -1,13 +1,19 @@
 let moment = require('moment')
 
 module.exports = {
+
+
+  tttf(t) {
+    return moment(t, ['h:mm A']).format('HH:mm');
+  },
+
 	agenda: function () {
 		let startOfWeek = moment().startOf('week');
 		let endOfWeek = moment().endOf('week');
 		let days = [];
 		let day = startOfWeek;
 		while (day <= endOfWeek) {
-			days.push(day.format('DD MMMM Y'));
+			days.push(day.format('MM-DD-YY'));
 			day = day.clone().add(1, 'd');
 		}
 		return days;

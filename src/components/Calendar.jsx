@@ -10,8 +10,7 @@ export default class Calendar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: '',
-      formatted: '',
+      formatted: moment().format('MM-DD-YY'),
       dateid: `${moment().dayOfYear()}${moment().year()}`,
       time: '',
       month: moment().month(),
@@ -23,7 +22,7 @@ export default class Calendar extends Component {
     this.nextMonth = this.nextMonth.bind(this);
     this.renderDates(moment());
     this.renderTime();
-    this.props.update(moment().format('MM DD YYYY'), this.state.time);
+    this.props.update(moment().format('MM-DD-YY'), this.state.time);
   }
 
   onClick(e) {
@@ -32,10 +31,9 @@ export default class Calendar extends Component {
     const day = e.target.id.slice(0, -4);
     this.setState({
       dateid: e.target.id,
-      formatted: moment().set('year', year).dayOfYear(day).format('MM DD YY'),
-      selected: moment().set('year', year).dayOfYear(day),
+      formatted: moment().set('year', year).dayOfYear(day).format('MM-DD-YY'),
     });
-    this.props.update(moment().set('year', year).dayOfYear(day).format('MM DD YY'), this.state.time);
+    this.props.update(moment().set('year', year).dayOfYear(day).format('MM-DD-YY'), this.state.time);
   }
 
   onSelect(e) {
@@ -73,13 +71,13 @@ export default class Calendar extends Component {
   render() {
     return (
       <div>
-        <span style={{fontSize: '12', color: colors.color.darkgrey, whiteSpace: 'nowrap'}}>
+        <span style={{fontSize: 12, color: colors.color.darkgrey, whiteSpace: 'nowrap'}}>
           <button style={{float: 'left'}} onClick={this.prevMonth} value='<'>{'<'}</button>
           {`${moment().month(this.state.month).format('MMMM')}  ${this.state.year}`}
           <button style={{float: 'right'}} onClick={this.nextMonth} value='>'>{'>'}</button>
         </span>
         <table style={{width: '100%'}}>
-          <tbody style={{fontSize: '11', textAlign: 'center'}}>
+          <tbody style={{fontSize: 11, textAlign: 'center'}}>
             <tr>
               {[...Array(7).keys()].map(s => 
                 <td style={{color: colors.color.orange}} key={`h${s}`}>
