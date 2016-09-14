@@ -29,9 +29,6 @@ module.exports = {
     const arr = [];
     const s = [
       'tags',
-      'prio',
-      'users',
-      'sub',
     ];
     s.forEach(i => arr.push({
       cname: `todo-${module.exports.hyphenate(i)}-setter`,

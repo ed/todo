@@ -4,6 +4,7 @@ import Calendar from './Calendar';
 import IoCalendar from 'react-icons/lib/io/calendar';
 import IoTrash from 'react-icons/lib/io/trash-a';
 import IoClose from 'react-icons/lib/io/close-circled';
+import IoAlert from 'react-icons/lib/io/alert';
 import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import GoCalendar from 'react-icons/lib/go/calendar';
 import GoPlus from 'react-icons/lib/go/plus';
@@ -32,9 +33,11 @@ export default class Todo extends React.Component {
       id: '',
       dueDate: '',
       time: '',
+      filter: '',
       dateSetter: false,
       viewDate: true,
       tags: '',
+      tagArray: [],
       prio: '',
       users: '',
       sub: '',
@@ -50,6 +53,10 @@ export default class Todo extends React.Component {
     this.toggleDone = this.toggleDone.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAgenda = this.handleAgenda.bind(this);
+    this.prioSelect = this.prioSelect.bind(this);
+    this.filterTags = this.filterTags.bind(this);
+    this.clearFilter = this.clearFilter.bind(this);
+    this.filterPrio = this.filterPrio.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.updateTime = this.updateTime.bind(this);
@@ -84,13 +91,34 @@ export default class Todo extends React.Component {
     this.setState({viewDate: !this.state.viewDate, dueDate: ''})
   }
 
+  prioSelect() {
+    let p = '';
+    switch(this.state.prio) {
+      case '':
+        p = 'low';
+        break;
+      case 'low':
+        p = 'med';
+        break;
+      case 'med':
+        p = 'high';
+        break;
+      case 'high':
+        p = '';
+        break;
+    }
+    const temp = {
+      prio: p
+    }
+    this.setState({prio: p})
+    this.props.actions.editTodo(this.state.id, temp);
+  }
+
 
   onKeyDown(e) {
     if (e.keyCode === 13) {
       e.preventDefault();
-        console.log(this.state.inputting);
-      if (this.state.inputting == false) {
-        console.log('yes');
+      if (this.state.inputting == false && (e.target.id == '' || e.target.id == 'input')) {
         this.setState({inputting: true});
       }
       else if (e.target.value) {
@@ -105,6 +133,11 @@ export default class Todo extends React.Component {
           this.setState({ inputting: false, input: '' });
         } else {
           this.props.actions.editTodo(this.state.id, temp);
+          if ([e.target.id] == 'tags') {
+            const a = this.state.tagArray;
+            a.push(e.target.value.trim());
+            this.setState({tagArray: a});
+            }
         }
         if (this.state.editView == true && [e.target.id] != 'input') {
           const idx = this.props.editList.findIndex(ptr => ptr.val == [e.target.id]);
@@ -124,7 +157,6 @@ export default class Todo extends React.Component {
   onClick(e) {
     e.preventDefault();
     const temp = this.props.tasks.get(e.target.id);
-    console.log(temp.get('idx'))
     this.setState({
       id: temp.get('id'),
       name: temp.get('name'),
@@ -166,6 +198,7 @@ export default class Todo extends React.Component {
       time: '',
       input: '',
       id: '',
+      filter: '',
       tags: '',
       idx: 0,
       done: 0,
@@ -207,26 +240,18 @@ export default class Todo extends React.Component {
   week() {
     const sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time'))));
     const week = this.props.currentWeek.map((day, idx) =>
-      <ul  id={`${day}`} key={`day${idx}`} style={{ color: colors.color.darkgrey, padding: 0, margin: 0}}> <li id={`${day}`} onClick={(e) => this.handleAgenda(e)} > {day} </li>{'\n'}
+      <ul  id={`${day}`} key={`day${idx}`} 
+        style={{ 
+          color: day == this.state.dueDate ? colors.color.blue: colors.color.darkgrey, 
+            padding: 0, 
+            margin: 0
+        }}> <li id={`${day}`} onClick={(e) => this.handleAgenda(e)} > {day} </li>{'\n'}
         {sorted.filter(task => task.get('dueDate').split(' ')[0] == day).entrySeq().map(([key,val]) => 
           <li>
             <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
               {val.get('name')}
             </p>
           </li>)}
-          {idx == this.props.currentWeek.length-1 ?
-            <div>
-              <h5 style={{padding: 0, margin: 0, color: colors.color.green, fontSize: 16}}>not in week</h5>
-              {sorted.filter(task => this.props.currentWeek.includes(task.get('dueDate')) == false && task.get('dueDate') != '').entrySeq().map(([key,val])=> 
-                <li>
-                  <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
-                    {`${outOfWeek(val.get('dueDate'))} ${val.get('name')}`}
-                  </p>
-                </li>
-              )}
-            </div>
-              : null
-          }
         </ul>)
     return week;
   }
@@ -241,6 +266,7 @@ export default class Todo extends React.Component {
       idx: 0,
       done: 0,
       prio: '',
+      filter: '',
       users: '',
       sub: '',
     });
@@ -248,14 +274,19 @@ export default class Todo extends React.Component {
 
   handleAgenda(e) {
     const day = e.target.id;
-    this.setState({dueDate: day, viewDate: true});
+    this.setState({dueDate: day, viewDate: true, filter: ''});
   }
 
-  cards(day) {
+  cards(day, filter) {
     let sorted = []
-    const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day || this.props.currentWeek.includes(task.get('dueDate')) == false);
-    const sorted2 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day)
-    this.state.dueDate == '' ? sorted = sorted1 : sorted = sorted2
+    if (filter !== '') {
+      sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get(filter) == this.state[filter])
+    }
+    else {
+      const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day || this.props.currentWeek.includes(task.get('dueDate')) == false);
+      const sorted2 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day)
+      this.state.dueDate == '' ? sorted = sorted1 : sorted = sorted2
+    }
     const zero = sorted.filter(task => task.get('done') == 0).entrySeq().map(([key, val]) => 
       <li 
         id={val.get('idx')}
@@ -314,6 +345,21 @@ export default class Todo extends React.Component {
     this.setState({viewDate: false})
   }
 
+  clearFilter(e) {
+    e.preventDefault();
+    this.setState({filter: ''})
+  }
+
+  filterTags(e) {
+    e.preventDefault();
+    this.setState({tags: e.target.value, filter: 'tags'})
+  }
+
+  filterPrio(e) {
+    e.preventDefault();
+    this.setState({prio: e.target.value, filter: 'prio'})
+  }
+
   editTime() {
     const time = {
       time: this.state.time,
@@ -347,7 +393,7 @@ export default class Todo extends React.Component {
     const edits = this.edits();
     const todos = this.todos();
     const week = this.week();
-    const cards = this.cards(this.state.dueDate);
+    const cards = this.cards(this.state.dueDate, this.state.filter);
     return (
       <div className="Grid Grid--flexCells" >
         <div className="Grid-cell">
@@ -382,6 +428,7 @@ export default class Todo extends React.Component {
                         <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
                         <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
                         <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
+                        <IoAlert size={22} onClick={this.prioSelect} color={colors.color.orange}/>
                         <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
                         <ReactCSSTransitionGroup
                           transitionName="calendar-trans"
@@ -406,6 +453,7 @@ export default class Todo extends React.Component {
                           actions={this.props.actions}
                         />
                         {edits}
+                        {this.state.prio}
                       </div>
                         : null}
                       </ReactCSSTransitionGroup>
@@ -413,7 +461,6 @@ export default class Todo extends React.Component {
                   </div>
                 </div>
                 <div className="Grid-cell" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
-                  <h2>{this.state.dueDate}</h2>
                   <div className="Aligner" style={{width: "100%", height: '100%'}}>
                     <div className="Aligner-item Aligner-item--fixed">
                       <ReactCSSTransitionGroup
@@ -421,7 +468,29 @@ export default class Todo extends React.Component {
                         transitionEnterTimeout={200}
                         transitionLeaveTimeout={200}
                       >
-                        {this.state.viewDate ?
+                        <div className='filters' style={{
+                          display: 'flex', justifyContent: 'center'}}>
+                          <select onChange={this.filterTags} value='a'>
+                            <option value="a" disabled> filter by tag </option>
+                            {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
+                          </select>
+                          <select onChange={this.filterPrio} value='a'>
+                            <option disabled value='a'> filter by priority</option>
+                            <option value = 'low'>low</option>)
+                            <option value = 'med'>med</option>)
+                            <option value = 'high'>high</option>)
+                          </select>
+                          <button onClick={this.clearFilter} value="clear filters">
+                            clear filters
+                          </button>
+                        </div>
+                        <div className='week-container' style={{
+                          display: 'flex', justifyContent: 'space-around'}}>
+                              {week}
+                              <h5 style={{margin: 0, padding: 0, 
+                                color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, 
+                                  fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> unscheduled </h5>
+                            </div>
                           <div className='card-container'>
                             <div className ="card">
                               <ul style={{padding: 0}}>
@@ -439,17 +508,6 @@ export default class Todo extends React.Component {
                               </ul>
                             </div>
                           </div>
-                            : 
-                            <div className='week-container' style={{textAlign: 'center'}}>
-                              {week}
-                              <h5 style={{margin: 0, padding: 0, color: colors.color.red, fontSize: 16}}> unscheduled </h5>
-                              {todos}
-                            </div>
-
-                        }
-                        <div id='viewDate' style={{textAlign: 'center'}} onClick={this.kanbanToggle}>
-                          <GoCalendar id='viewDate' onClick={this.toggle} size={22} color={colors.color.red}/>
-                        </div>
                       </ReactCSSTransitionGroup>
                     </div>
                   </div>
