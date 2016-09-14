@@ -20,7 +20,11 @@ module.exports = {
   },
 
   outOfWeek(d) {
-    return moment(d, 'MM-DD-YY').endOf('day').fromNow() 
+    const date =  moment(d, 'MM-DD-YY').endOf('day').fromNow() ;
+    if (date == 'Invalid date')
+      return '';
+    else 
+      return date;
   },
 
   createTimeInterval: function() {

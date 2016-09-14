@@ -4,14 +4,15 @@ import { List, Map, OrderedMap} from 'immutable';
 export default function taskReducer(state=List(), action) {
   switch(action.type) {
     case ADD_TASK:
+      console.log(action.obj);
       return state.push(
         Map({id: action.id, 
           timestamp: action.timestamp, 
           task: action.task, 
-          name: action.name,
+          name: action.obj.input,
           location: action.location,
-          time: action.time,
-          dueDate: action.dueDate,
+          time: action.obj.time,
+          dueDate: action.obj.dueDate,
           tags: action.tags,
           prio: action.prio,
           users: action.users,

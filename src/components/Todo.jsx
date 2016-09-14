@@ -6,6 +6,7 @@ import IoTrash from 'react-icons/lib/io/trash-a';
 import IoClose from 'react-icons/lib/io/close-circled';
 import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import GoCalendar from 'react-icons/lib/go/calendar';
+import GoPlus from 'react-icons/lib/go/plus';
 import TodoInput from './TodoInput';
 import { tttf, outOfWeek } from '../utils/TimeUtils'
 import { setCD } from '../utils/GeneralUtils'
@@ -25,13 +26,14 @@ export default class Todo extends React.Component {
     super(props);
     this.state = {
       editView: false,
+      inputing: false,
       name: '',
       input: '',
       id: '',
       dueDate: '',
       time: '',
       dateSetter: false,
-      viewDate: false,
+      viewDate: true,
       tags: '',
       prio: '',
       users: '',
@@ -44,6 +46,7 @@ export default class Todo extends React.Component {
     this.editOff = this.editOff.bind(this);
     this.kanbanToggle= this.kanbanToggle.bind(this);
     this.toggle = this.toggle.bind(this);
+    this.newTodo = this.newTodo.bind(this);
     this.toggleDone = this.toggleDone.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAgenda = this.handleAgenda.bind(this);
@@ -53,7 +56,7 @@ export default class Todo extends React.Component {
     this.editTime = this.editTime.bind(this);
   }
 
-componentDidUpdate() {
+  componentDidUpdate() {
     if (this.props.tasks.size > this.state.num) {
       this.editID(this.props.tasks.size-1);
     }
@@ -70,7 +73,7 @@ componentDidUpdate() {
   }
 
   kanbanToggle() {
-    this.setState({viewDate: !this.state.viewDate})
+    this.setState({viewDate: !this.state.viewDate, dueDate: ''})
   }
 
 
@@ -80,11 +83,13 @@ componentDidUpdate() {
       if (e.target.value) {
         const temp = {
           [e.target.id]: e.target.value.trim(),
+          dueDate: this.state.dueDate,
+          time: this.state.time,
         };
         this.setState({ [e.target.id]: e.target.value });
         if ([e.target.id] == 'input') {
-          this.props.actions.addTask(e.target.value, 'todo');
-          this.setState({ input: '' });
+          this.props.actions.addTask(temp, 'todo');
+          this.setState({ inputing: false, input: '' });
         } else {
           this.props.actions.editTodo(this.state.id, temp);
         }
@@ -141,9 +146,20 @@ componentDidUpdate() {
     document.getElementById(temp.get('idx')).focus();
   }
 
-
   editOff() {
-    this.setState({ editView: false, dateSetter: false });
+    this.setState({
+      name: '',
+      dueDate: '',
+      time: '',
+      input: '',
+      id: '',
+      tags: '',
+      idx: 0,
+      done: 0,
+      prio: '',
+      users: '',
+      sub: '',
+    });
   }
 
   toggle(e) {
@@ -152,7 +168,7 @@ componentDidUpdate() {
 
   todos() {
     const todos = this.props.tasks.filter(task => task.get('dueDate') == '').entrySeq().map(([key,val]) => 
-        <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
+      <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
         {val.get('name')}
       </p>
     )
@@ -183,24 +199,39 @@ componentDidUpdate() {
         {sorted.filter(task => task.get('dueDate').split(' ')[0] == day).entrySeq().map(([key,val]) => 
           <li>
             <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
-        {val.get('name')}
+              {val.get('name')}
             </p>
           </li>)}
           {idx == this.props.currentWeek.length-1 ?
             <div>
-            <h5 style={{padding: 0, margin: 0, color: colors.color.green}}>not in week</h5>
-            {sorted.filter(task => task.get('dueDate') != '' && task.get('dueDate') != day).entrySeq().map(([key,val])=> 
-            <li>
-            <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
-              {`${outOfWeek(val.get('dueDate'))} ${val.get('name')}`}
-            </p>
-          </li>
-            )}
-        </div>
-           : null
-            }
-      </ul>)
+              <h5 style={{padding: 0, margin: 0, color: colors.color.green, fontSize: 16}}>not in week</h5>
+              {sorted.filter(task => this.props.currentWeek.includes(task.get('dueDate')) == false && task.get('dueDate') != '').entrySeq().map(([key,val])=> 
+                <li>
+                  <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
+                    {`${outOfWeek(val.get('dueDate'))} ${val.get('name')}`}
+                  </p>
+                </li>
+              )}
+            </div>
+              : null
+          }
+        </ul>)
     return week;
+  }
+
+  newTodo() {
+    this.setState({inputing: true});
+    this.setState({
+      name: '',
+      input: '',
+      id: '',
+      tags: '',
+      idx: 0,
+      done: 0,
+      prio: '',
+      users: '',
+      sub: '',
+    });
   }
 
   handleAgenda(e) {
@@ -209,7 +240,10 @@ componentDidUpdate() {
   }
 
   cards(day) {
-    const sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day);
+    let sorted = []
+    const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day || this.props.currentWeek.includes(task.get('dueDate')) == false);
+    const sorted2 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day)
+    this.state.dueDate == '' ? sorted = sorted1 : sorted = sorted2
     const zero = sorted.filter(task => task.get('done') == 0).entrySeq().map(([key, val]) => 
       <li 
         id={val.get('idx')}
@@ -218,7 +252,7 @@ componentDidUpdate() {
           color: setCD(val.get('done'), colors.color.blue).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${val.get('time')} ${val.get('name')}`}
+        {`${outOfWeek(val.get('dueDate'))} ${val.get('time')} ${val.get('name')}`}
       </li>) 
     const one = sorted.filter(task => task.get('done') == 1).entrySeq().map(([key, val]) => 
       <li 
@@ -228,7 +262,7 @@ componentDidUpdate() {
           color: setCD(val.get('done')).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${val.get('time')} ${val.get('name')}`}
+        {`${outOfWeek(val.get('dueDate'))} ${val.get('time')} ${val.get('name')}`}
       </li>) 
     const two = sorted.filter(task => task.get('done') == 2).entrySeq().map(([key, val]) => 
       <li 
@@ -238,7 +272,7 @@ componentDidUpdate() {
           color: setCD(val.get('done')).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${val.get('time')} ${val.get('name')}`}
+        {`${outOfWeek(val.get('dueDate'))} ${val.get('time')} ${val.get('name')}`}
       </li>) 
     return {
       d: day,
@@ -307,99 +341,104 @@ componentDidUpdate() {
         <div className="Grid-cell">
           <div className="Aligner" style={{width: "100%"}}>
             <div className="Aligner-item Aligner-item--fixed">
-              <textarea
-                autoFocus
-                className="todo-name-setter"
-                id="input"
-                maxLength={30}
-                ref={(c) => this._input = c}
-                value={this.state.input}
-                onChange={this.onChange}
-                onKeyDown={this.onKeyDown}
-                placeholder="add todo"
-                style={{color: colors.color.darkgrey, textAlign: "center"}}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="Grid-cell">
-          <div className="Aligner" style={{width: "100%"}}>
-            <div className="Aligner-item Aligner-item--fixed">
-              <ReactCSSTransitionGroup
-                transitionName="edit-trans"
-                transitionEnterTimeout={500}
-                transitionLeaveTimeout={300}
-              >
-                {this.state.editView ?
-                  <div style={{textAlign: 'center'}}>
-                    <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
-                    <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
-                    <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
-                    <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
-                    <ReactCSSTransitionGroup
-                      transitionName="calendar-trans"
-                      transitionEnterTimeout={500}
-                      transitionLeaveTimeout={300}
-                    >
-                      <div className='cal' style={{textAlign: 'center', display: 'flex', justifyContent: 'center'}}>
-                        {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
-                      </div>
-                    </ReactCSSTransitionGroup>
-                    <textarea style={{fontSize: 14, color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.dueDate} ${this.state.time}`}/>
-                    <TodoInput
-                      maxLength={30}
-                      key={this.state.id}
-                      k={this.state.id}
-                      type={"todo"}
-                      done={this.state.done}
-                      id={this.state.idx}
-                      update={this.handleNameUpdate.bind(this)} 
-                      name={this.state.name}
-                      actions={this.props.actions}
-                    />
-                    {edits}
-                  </div>
-                    : null}
-                  </ReactCSSTransitionGroup>
+              {this.state.inputing ? 
+                <textarea
+                  autoFocus
+                  className="todo-name-setter"
+                  id="input"
+                  maxLength={30}
+                  ref={(c) => this._input = c}
+                  value={this.state.input}
+                  onChange={this.onChange}
+                  onKeyDown={this.onKeyDown}
+                  placeholder="add todo"
+                  style={{color: colors.color.darkgrey, textAlign: "center"}}
+                />
+                  : <GoPlus size={30} color={colors.color.blue} onClick={this.newTodo}/>}
                 </div>
               </div>
             </div>
-            <div className="Grid-cell" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
-          {this.state.viewDate ? <h2>{this.state.dueDate}</h2> : null}
-          <div className="Aligner" style={{width: "100%", height: '100%'}}>
+            <div className="Grid-cell">
+              <div className="Aligner" style={{width: "100%"}}>
                 <div className="Aligner-item Aligner-item--fixed">
                   <ReactCSSTransitionGroup
-                    transitionName="todo-trans"
-                    transitionEnterTimeout={200}
-                    transitionLeaveTimeout={200}
+                    transitionName="edit-trans"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={300}
                   >
-                    {this.state.viewDate ?
-                        <div className='week-container' style={{textAlign: 'center'}}>
-                          {week}
-                          <h5 style={{margin: 0, padding: 0, color: colors.color.red}}> unscheduled </h5>
-                          {todos}
-                        </div>
-                      : 
-                      <div className='card-container'>
-                        <div className ="card">
-                          <ul style={{padding: 0}}>
-                            {cards.z}
-                          </ul>
-                        </div>
-                        <div className ="card">
-                          <ul style={{padding: 0}}>
-                            {cards.o}
-                          </ul>
-                        </div>
-                        <div className ="card">
-                          <ul style={{padding: 0}}>
-                            {cards.t}
-                          </ul>
-                        </div>
-                      </div>}
-                  <div id='viewDate' style={{textAlign: 'center'}} onClick={this.kanbanToggle}>
-                        <GoCalendar id='viewDate' onClick={this.toggle} size={22} color={colors.color.red}/>
+                    {this.state.editView ?
+                      <div style={{textAlign: 'center'}}>
+                        <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
+                        <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
+                        <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
+                        <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
+                        <ReactCSSTransitionGroup
+                          transitionName="calendar-trans"
+                          transitionEnterTimeout={500}
+                          transitionLeaveTimeout={300}
+                        >
+                          <div className='cal' style={{textAlign: 'center', display: 'flex', justifyContent: 'center'}}>
+                            {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
+                          </div>
+                        </ReactCSSTransitionGroup>
+                        <textarea style={{fontSize: 14, color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.dueDate} ${this.state.time}`}/>
+
+                        <TodoInput
+                          maxLength={30}
+                          key={this.state.id}
+                          k={this.state.id}
+                          type={"todo"}
+                          done={this.state.done}
+                          id={this.state.idx}
+                          update={this.handleNameUpdate.bind(this)} 
+                          name={this.state.name}
+                          actions={this.props.actions}
+                        />
+                        {edits}
+                      </div>
+                        : null}
+                      </ReactCSSTransitionGroup>
+                    </div>
                   </div>
+                </div>
+                <div className="Grid-cell" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
+                  {this.state.viewDate ? <h2>{this.state.dueDate}</h2> : null}
+                  <div className="Aligner" style={{width: "100%", height: '100%'}}>
+                    <div className="Aligner-item Aligner-item--fixed">
+                      <ReactCSSTransitionGroup
+                        transitionName="todo-trans"
+                        transitionEnterTimeout={200}
+                        transitionLeaveTimeout={200}
+                      >
+                        {this.state.viewDate ?
+                          <div className='card-container'>
+                            <div className ="card">
+                              <ul style={{padding: 0}}>
+                                {cards.z}
+                              </ul>
+                            </div>
+                            <div className ="card">
+                              <ul style={{padding: 0}}>
+                                {cards.o}
+                              </ul>
+                            </div>
+                            <div className ="card">
+                              <ul style={{padding: 0}}>
+                                {cards.t}
+                              </ul>
+                            </div>
+                          </div>
+                            : 
+                            <div className='week-container' style={{textAlign: 'center'}}>
+                              {week}
+                              <h5 style={{margin: 0, padding: 0, color: colors.color.red, fontSize: 16}}> unscheduled </h5>
+                              {todos}
+                            </div>
+
+                        }
+                        <div id='viewDate' style={{textAlign: 'center'}} onClick={this.kanbanToggle}>
+                          <GoCalendar id='viewDate' onClick={this.toggle} size={22} color={colors.color.red}/>
+                        </div>
                       </ReactCSSTransitionGroup>
                     </div>
                   </div>
