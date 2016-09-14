@@ -33,11 +33,6 @@ textarea:focus {
 	transition-duration: .7s;
 }
 
-#nav-panel {
-	color: white;
-	font-size: 30px;
-}
-
 .edit-trans-enter {
   opacity: 0.01;
 }
@@ -117,8 +112,8 @@ textarea:focus {
 	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
     border-radius: 5px; /* 5px rounded corners */
-	width: 150px;
-	height: 150px;
+	width: 200px;
+	height: 300px;
 	padding: 10px;
 	margin: 10px;
 	white-space: nowrap;

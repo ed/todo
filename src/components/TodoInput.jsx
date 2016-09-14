@@ -14,17 +14,12 @@ export default class TodoInput extends React.Component {
     if (e.keyCode === 13) {
       e.preventDefault();
       if (e.target.value) {
-        if (this.props.name == this.state.name) {
-          this.props.actions.addTask('', 'todo');
-        }
-        else {
-          const temp = {
-            name: e.target.value.trim(),
-          };
-          this.props.actions.editTodo(this.props.k, temp);
-          this.props.actions.addTask('', 'todo');
-          this.props.update(e.target.value.trim());
-        }
+        const temp = {
+          name: e.target.value.trim(),
+        };
+        this.props.actions.editTodo(this.props.k, temp);
+        this.props.update(e.target.value.trim(), this.props.id);
+        this.setState({name: e.target.value.trim()});
       }
     }
   }
@@ -34,13 +29,13 @@ export default class TodoInput extends React.Component {
   }
 
   render() {
-    const { k, id, name, onClick, done } = this.props;
+    const { k, id, name, onClick, done, ro} = this.props;
     const { c, d } = setCD(done);
-    console.log(c,d);
     return (
       <textarea
+        readOnly={ro}
         style={{
-            textDecoration: d,
+          textDecoration: d,
             color: c,
             textAlign: "center"}}
             key={k}

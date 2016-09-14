@@ -76,7 +76,7 @@ export default class Calendar extends Component {
           {`${moment().month(this.state.month).format('MMMM')}  ${this.state.year}`}
           <button style={{float: 'right'}} onClick={this.nextMonth} value='>'>{'>'}</button>
         </span>
-        <table style={{width: '100%'}}>
+        <table style={{width: '50%'}}>
           <tbody style={{fontSize: 11, textAlign: 'center'}}>
             <tr>
               {[...Array(7).keys()].map(s => 
