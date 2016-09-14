@@ -451,14 +451,14 @@ export default class Todo extends React.Component {
                             clear filters
                           </button>
                         </div>
+                          <div className='card-container'>
                         <div className='week-container' style={{
-                          display: 'flex', justifyContent: 'space-around'}}>
+                          display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
                               {week}
                               <h5 style={{margin: 0, padding: 0, 
                                 color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, 
                                   fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> unscheduled </h5>
-                            </div>
-                          <div className='card-container'>
+                              </div>
                             <div className ="card">
                               <ul style={{padding: 0}}>
                                 {cards.z}
