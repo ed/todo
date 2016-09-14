@@ -26,7 +26,7 @@ export default class Todo extends React.Component {
     super(props);
     this.state = {
       editView: false,
-      inputing: false,
+      inputting: false,
       name: '',
       input: '',
       id: '',
@@ -62,6 +62,14 @@ export default class Todo extends React.Component {
     }
   }
 
+  componentDidMount() {
+    window.addEventListener("keydown", this.onKeyDown);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this.onKeyDown);
+  }
+
   onChange(e) {
     e.preventDefault();
     this.setState({ [e.target.id]: e.target.value });
@@ -80,7 +88,12 @@ export default class Todo extends React.Component {
   onKeyDown(e) {
     if (e.keyCode === 13) {
       e.preventDefault();
-      if (e.target.value) {
+        console.log(this.state.inputting);
+      if (this.state.inputting == false) {
+        console.log('yes');
+        this.setState({inputting: true});
+      }
+      else if (e.target.value) {
         const temp = {
           [e.target.id]: e.target.value.trim(),
           dueDate: this.state.dueDate,
@@ -89,7 +102,7 @@ export default class Todo extends React.Component {
         this.setState({ [e.target.id]: e.target.value });
         if ([e.target.id] == 'input') {
           this.props.actions.addTask(temp, 'todo');
-          this.setState({ inputing: false, input: '' });
+          this.setState({ inputting: false, input: '' });
         } else {
           this.props.actions.editTodo(this.state.id, temp);
         }
@@ -186,7 +199,6 @@ export default class Todo extends React.Component {
         placeholder={val.def}
         maxLength="20"
         onChange={(e) => this.onChange(e)}
-        onKeyDown={(e) => this.onKeyDown(e)}
       />);
 
     return edits;
@@ -220,7 +232,7 @@ export default class Todo extends React.Component {
   }
 
   newTodo() {
-    this.setState({inputing: true});
+    this.setState({inputting: true});
     this.setState({
       name: '',
       input: '',
@@ -337,11 +349,11 @@ export default class Todo extends React.Component {
     const week = this.week();
     const cards = this.cards(this.state.dueDate);
     return (
-      <div className="Grid Grid--flexCells">
+      <div className="Grid Grid--flexCells" >
         <div className="Grid-cell">
           <div className="Aligner" style={{width: "100%"}}>
             <div className="Aligner-item Aligner-item--fixed">
-              {this.state.inputing ? 
+              {this.state.inputting ? 
                 <textarea
                   autoFocus
                   className="todo-name-setter"
@@ -350,7 +362,6 @@ export default class Todo extends React.Component {
                   ref={(c) => this._input = c}
                   value={this.state.input}
                   onChange={this.onChange}
-                  onKeyDown={this.onKeyDown}
                   placeholder="add todo"
                   style={{color: colors.color.darkgrey, textAlign: "center"}}
                 />
