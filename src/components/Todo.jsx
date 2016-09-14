@@ -54,13 +54,11 @@ export default class Todo extends React.Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAgenda = this.handleAgenda.bind(this);
     this.prioSelect = this.prioSelect.bind(this);
-    this.filterTags = this.filterTags.bind(this);
+    this.filter = this.filter.bind(this);
     this.clearFilter = this.clearFilter.bind(this);
-    this.filterPrio = this.filterPrio.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.updateTime = this.updateTime.bind(this);
-    this.editTime = this.editTime.bind(this);
   }
 
   componentDidUpdate() {
@@ -264,6 +262,7 @@ export default class Todo extends React.Component {
 
   cards(day, filter) {
     let sorted = []
+    let inweek = false
     if (filter !== '') {
       sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get(filter) == this.state[filter])
     }
@@ -271,6 +270,7 @@ export default class Todo extends React.Component {
       const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day || this.props.currentWeek.includes(task.get('dueDate')) == false);
       const sorted2 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day)
       this.state.dueDate == '' ? sorted = sorted1 : sorted = sorted2
+      this.props.currentWeek.includes(this.state.dueDate) ? inweek = true : inweek= false
     }
     const zero = sorted.filter(task => task.get('done') == 0).entrySeq().map(([key, val]) => 
       <li 
@@ -280,7 +280,7 @@ export default class Todo extends React.Component {
           color: setCD(val.get('done'), colors.color.blue).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}`}
+        {!inweek ?  `${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}` : `${val.get('time')} ${val.get('name')}`}
       </li>) 
     const one = sorted.filter(task => task.get('done') == 1).entrySeq().map(([key, val]) => 
       <li 
@@ -290,7 +290,7 @@ export default class Todo extends React.Component {
           color: setCD(val.get('done')).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}`}
+        {!inweek ?  `${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}` : `${val.get('time')} ${val.get('name')}`}
       </li>) 
     const two = sorted.filter(task => task.get('done') == 2).entrySeq().map(([key, val]) => 
       <li 
@@ -300,7 +300,7 @@ export default class Todo extends React.Component {
           color: setCD(val.get('done')).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}`}
+        {!inweek ?  `${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}` : `${val.get('time')} ${val.get('name')}`}
       </li>) 
     return {
       d: day,
@@ -316,12 +316,6 @@ export default class Todo extends React.Component {
     this.setState({ editView: false, dateSetter: false });
   }
 
-  handleDelete(e) {
-    e.preventDefault();
-    this.props.actions.deleteTask(this.state.id);
-    this.setState({ editView: false });
-  }
-
   updateTime(d, t) {
     this.setState({dueDate: d, time: t})
     const time = {
@@ -332,26 +326,14 @@ export default class Todo extends React.Component {
     this.setState({ time: '', dateSetter: false });
   }
 
-  kanbanOff() {
-    this.setState({viewDate: false})
-  }
-
   clearFilter(e) {
     e.preventDefault();
     this.setState({filter: ''})
   }
 
-  filterTags(e) {
+  filter(e) {
     e.preventDefault();
-    this.setState({tags: e.target.value, filter: 'tags'})
-  }
-
-  filterPrio(e) {
-    e.preventDefault();
-    this.setState({prio: e.target.value, filter: 'prio'})
-  }
-
-  editTime(d,t) {
+    this.setState({tags: e.target.value, filter: [e.target.id]})
   }
 
   toggleDone() {
@@ -454,11 +436,11 @@ export default class Todo extends React.Component {
                       >
                         <div className='filters' style={{
                           display: 'flex', justifyContent: 'center'}}>
-                          <select onChange={this.filterTags} value='a'>
+                          <select id='filter' onChange={this.filter} value='a'>
                             <option value="a" disabled> filter by tag </option>
                             {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
                           </select>
-                          <select onChange={this.filterPrio} value='a'>
+                          <select id='prio' onChange={this.filter} value='a'>
                             <option disabled value='a'> filter by priority</option>
                             <option value = 'low'>low</option>)
                             <option value = 'med'>med</option>)
