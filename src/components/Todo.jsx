@@ -34,6 +34,7 @@ export default class Todo extends React.Component {
       dueDate: '',
       time: '',
       filter: '',
+      filterval: '',
       dateSetter: false,
       viewDate: true,
       tags: '',
@@ -264,7 +265,7 @@ export default class Todo extends React.Component {
     let sorted = []
     let inweek = false
     if (filter !== '') {
-      sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get(filter) == this.state[filter])
+      sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get(filter) == this.state.filterval)
     }
     else {
       const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day || this.props.currentWeek.includes(task.get('dueDate')) == false);
@@ -328,12 +329,12 @@ export default class Todo extends React.Component {
 
   clearFilter(e) {
     e.preventDefault();
-    this.setState({filter: ''})
+    this.setState({filter: '', filterval: ''})
   }
 
   filter(e) {
     e.preventDefault();
-    this.setState({tags: e.target.value, filter: [e.target.id]})
+    this.setState({filterval: e.target.value, filter: e.target.id})
   }
 
   toggleDone() {
@@ -436,7 +437,7 @@ export default class Todo extends React.Component {
                       >
                         <div className='filters' style={{
                           display: 'flex', justifyContent: 'center'}}>
-                          <select id='filter' onChange={this.filter} value='a'>
+                          <select id='tags' onChange={this.filter} value='a'>
                             <option value="a" disabled> filter by tag </option>
                             {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
                           </select>
