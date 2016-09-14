@@ -413,7 +413,7 @@ export default class Todo extends React.Component {
                   </div>
                 </div>
                 <div className="Grid-cell" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
-                  {this.state.viewDate ? <h2>{this.state.dueDate}</h2> : null}
+                  <h2>{this.state.dueDate}</h2>
                   <div className="Aligner" style={{width: "100%", height: '100%'}}>
                     <div className="Aligner-item Aligner-item--fixed">
                       <ReactCSSTransitionGroup
