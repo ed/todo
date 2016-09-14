@@ -1,7 +1,7 @@
 exports.color = {
-  red:        '#FF7777',
+  red:        '#FF6060',
   blue:       '#6CC8FD',
-  green:      '#D4ED74',
+  green:      '#70D602',
   orange:     '#FFBA77',
   lime:       '#D1F2A5',
   comp:       '#A5F468',
