@@ -234,7 +234,13 @@ export default class Todo extends React.Component {
           color: day == this.state.dueDate ? colors.color.blue: colors.color.darkgrey, 
             padding: 0, 
             margin: 0
-        }}> <li id={`${day}`} onClick={(e) => this.handleAgenda(e)} > {day} </li>{'\n'}
+        }}>
+        <li id={`${day}`} onClick={(e) => this.handleAgenda(e)} > 
+          {`${day} `} 
+          <span className='todo-count'>
+            {this.props.tasks.filter(task => task.get('dueDate') == day).size}
+          </span>
+        </li>
         </ul>)
     return week;
   }
@@ -273,6 +279,7 @@ export default class Todo extends React.Component {
       this.state.dueDate == '' ? sorted = sorted1 : sorted = sorted2
       this.props.currentWeek.includes(this.state.dueDate) ? inweek = true : inweek= false
     }
+      const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == '' || this.props.currentWeek.includes(task.get('dueDate')) == false);
     const zero = sorted.filter(task => task.get('done') == 0).entrySeq().map(([key, val]) => 
       <li 
         id={val.get('idx')}
@@ -308,6 +315,7 @@ export default class Todo extends React.Component {
       z: zero,
       o: one,
       t: two,
+      s: sorted1.size
     }
   }
 
@@ -456,8 +464,11 @@ export default class Todo extends React.Component {
                           display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
                               {week}
                               <h5 style={{margin: 0, padding: 0, 
-                                color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, 
-                                  fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> unscheduled </h5>
+                                color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> not in week 
+                                <span className="todo-count">
+                                  {cards.s}
+                                </span>
+  </h5>
                               </div>
                             <div className ="card">
                               <ul style={{padding: 0}}>
