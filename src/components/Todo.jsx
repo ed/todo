@@ -43,6 +43,7 @@ export default class Todo extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.toggleDone = this.toggleDone.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleAgenda = this.handleAgenda.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.updateTime = this.updateTime.bind(this);
@@ -154,14 +155,14 @@ export default class Todo extends React.Component {
   }
 
   edits() {
-    const edits = this.props.editList.map((obj, key) =>
+    const edits = this.props.editList.map((val, key) =>
       <textarea
         style={{textAlign: 'center'}}
-        className={obj.cname}
+        className={val.cname}
         key={key} 
-        id={obj.val}
-        value={this.state[obj.val]}
-        placeholder={obj.def}
+        id={val.val}
+        value={this.state[val.val]}
+        placeholder={val.def}
         maxLength="20"
         onChange={(e) => this.onChange(e)}
         onKeyDown={(e) => this.onKeyDown(e)}
@@ -172,10 +173,10 @@ export default class Todo extends React.Component {
   week() {
     const sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time'))));
     const week = this.props.currentWeek.map((day, idx) =>
-      <ul key={`day${idx}`}> {day}{'\n'}
-        {sorted.filter(task => task.get('dueDate').split(' ')[0] == day).entrySeq().map(([key,obj]) => 
-          <li style={{color: setCD(obj.get('done')).c, textDecoration: setCD(obj.get('done')).d}}>
-            {`${obj.get('time')} ${obj.get('name')}`}
+      <ul onClick={(e) => this.handleAgenda(e)} id={`${day}`} key={`day${idx}`}> {day}{'\n'}
+        {sorted.filter(task => task.get('dueDate').split(' ')[0] == day).entrySeq().map(([key,val]) => 
+          <li style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d}}>
+            {`${val.get('time')} ${val.get('name')}`}
           </li>
         )}
       </ul>
@@ -183,37 +184,43 @@ export default class Todo extends React.Component {
     return week;
   }
 
-  cardZero() {
-    const zero = this.props.tasks.filter(task => task.get('done') == 0).entrySeq().map(([key, val]) => 
-      <li 
-        style={{
-        color: setCD(val.get('done')).c,
-        textDecoration: setCD(val.get('done')).d,
-        }}>
-       {val.get('name')} </li>) 
-    return zero;
+  handleAgenda(e) {
+    const day = e.target.id;
+    this.setState({dueDate: day});
   }
 
-  cardOne() {
-    const one = this.props.tasks.filter(task => task.get('done') == 1).entrySeq().map(([key, val]) => 
+  cards(day) {
+    const sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day);
+    const zero = sorted.filter(task => task.get('done') == 0).entrySeq().map(([key, val]) => 
+      <li 
+        style={{
+        color: setCD(val.get('done'), colors.color.blue).c,
+        textDecoration: setCD(val.get('done')).d,
+        }}>
+        {`${val.get('time')} ${val.get('name')}`}
+        </li>) 
+    const one = sorted.filter(task => task.get('done') == 1).entrySeq().map(([key, val]) => 
       <li 
         style={{
         color: setCD(val.get('done')).c,
         textDecoration: setCD(val.get('done')).d,
         }}>
-       {val.get('name')} </li>) 
-    return one;
-  }
-
-  cardTwo() {
-    const two = this.props.tasks.filter(task => task.get('done') == 2).entrySeq().map(([key, val]) => 
+        {`${val.get('time')} ${val.get('name')}`}
+        </li>) 
+    const two = sorted.filter(task => task.get('done') == 2).entrySeq().map(([key, val]) => 
       <li 
         style={{
         color: setCD(val.get('done')).c,
         textDecoration: setCD(val.get('done')).d,
         }}>
-       {val.get('name')} </li>) 
-    return two;
+        {`${val.get('time')} ${val.get('name')}`}
+        </li>) 
+    return {
+      d: day,
+      z: zero,
+      o: one,
+      t: two,
+    }
   }
 
   handleDelete(e) {
@@ -265,9 +272,7 @@ export default class Todo extends React.Component {
     const todos = this.todos();
     const edits = this.edits();
     const week = this.week();
-    const zero = this.cardZero();
-    const one = this.cardOne();
-    const two = this.cardTwo();
+    const cards = this.cards(this.state.dueDate);
     return (
       <div className="Grid Grid--flexCells">
         <div className="Grid-cell" id="nav-panel" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
@@ -276,20 +281,21 @@ export default class Todo extends React.Component {
               {week}
             </div>
           </div>
+          {cards.d}
           <div className='card-container'>
-          <div className ="card">
-              <ul>
-                {zero}
+            <div className ="card">
+            <ul>
+              {cards.z}
               </ul>
           </div>
           <div className ="card">
               <ul>
-                {one}
+              {cards.o}
               </ul>
           </div>
           <div className ="card">
               <ul>
-                {two}
+              {cards.t}
               </ul>
             </div>
           </div>

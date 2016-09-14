@@ -5,8 +5,8 @@ module.exports = {
     return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   },
 
-  setCD(ds) {
-    let color = colors.color.darkgrey;
+  setCD(ds, c) {
+    let color = c || colors.color.darkgrey;
     let decor = 'none';
     switch(ds) {
       case 0:
