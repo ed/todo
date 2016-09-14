@@ -108,6 +108,21 @@ textarea:focus {
    color:    #CCDDEE;
 }
 
-text-decoration-color: #FF7777;
-
-
+.card-container {
+	display: flex;
+	white-space: nowrap;
+	justify-content: center;
+}
+.card {
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+	width: 150px;
+	height: 150px;
+	padding: 10px;
+	margin: 10px;
+	white-space: nowrap;
+}
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}

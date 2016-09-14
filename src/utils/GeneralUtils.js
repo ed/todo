@@ -1,6 +1,28 @@
+import colors from '../constants/colors'
+
 module.exports = {
   hyphenate(i) {
     return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+  },
+
+  setCD(ds) {
+    let color = colors.color.darkgrey;
+    let decor = 'none';
+    switch(ds) {
+      case 0:
+        break;
+      case 1:
+        color = colors.color.orange;
+        break;
+      case 2:
+        color = colors.color.red;
+        decor = 'line-through';
+        break;
+    }
+    return {
+      c: color,
+      d: decor,
+    }
   },
 
   createEdits() {

@@ -16,7 +16,7 @@ export default function taskReducer(state=List(), action) {
 					prio: action.prio,
 					users: action.users,
 					sub: action.sub,
-                    done: false})
+                    done: 0})
             );
         case DELETE_TASK:
             return state.filter( task => task.get('id') !== action.id ); 
