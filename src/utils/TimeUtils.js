@@ -20,7 +20,7 @@ module.exports = {
   },
 
   outOfWeek(d) {
-    const date =  moment(d, 'MM-DD-YY').endOf('day').fromNow() ;
+    const date =  moment(d, 'MM-DD-YY HH:mm').fromNow() ;
     if (date == 'Invalid date')
       return '';
     else 

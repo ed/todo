@@ -212,15 +212,6 @@ export default class Todo extends React.Component {
     this.setState({[e.target.id] : !this.state[e.target.id]})
   }
 
-  todos() {
-    const todos = this.props.tasks.filter(task => task.get('dueDate') == '').entrySeq().map(([key,val]) => 
-      <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
-        {val.get('name')}
-      </p>
-    )
-    return todos;
-  }
-
   edits() {
     const edits = this.props.editList.map((val, key) =>
       <textarea
@@ -238,7 +229,6 @@ export default class Todo extends React.Component {
   }
 
   week() {
-    const sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time'))));
     const week = this.props.currentWeek.map((day, idx) =>
       <ul  id={`${day}`} key={`day${idx}`} 
         style={{ 
@@ -246,12 +236,6 @@ export default class Todo extends React.Component {
             padding: 0, 
             margin: 0
         }}> <li id={`${day}`} onClick={(e) => this.handleAgenda(e)} > {day} </li>{'\n'}
-        {sorted.filter(task => task.get('dueDate').split(' ')[0] == day).entrySeq().map(([key,val]) => 
-          <li>
-            <p id={val.get('idx')} key={val.get('id')} onClick={(e) => this.onClick(e)} style={{color: setCD(val.get('done'), colors.color.blue).c, textDecoration: setCD(val.get('done')).d, padding: 0, margin: 0}}>
-              {val.get('name')}
-            </p>
-          </li>)}
         </ul>)
     return week;
   }
@@ -266,6 +250,7 @@ export default class Todo extends React.Component {
       idx: 0,
       done: 0,
       prio: '',
+      time: '',
       filter: '',
       users: '',
       sub: '',
@@ -295,7 +280,7 @@ export default class Todo extends React.Component {
           color: setCD(val.get('done'), colors.color.blue).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${outOfWeek(val.get('dueDate'))} ${val.get('time')} ${val.get('name')}`}
+        {`${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}`}
       </li>) 
     const one = sorted.filter(task => task.get('done') == 1).entrySeq().map(([key, val]) => 
       <li 
@@ -305,7 +290,7 @@ export default class Todo extends React.Component {
           color: setCD(val.get('done')).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${outOfWeek(val.get('dueDate'))} ${val.get('time')} ${val.get('name')}`}
+        {`${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}`}
       </li>) 
     const two = sorted.filter(task => task.get('done') == 2).entrySeq().map(([key, val]) => 
       <li 
@@ -315,7 +300,7 @@ export default class Todo extends React.Component {
           color: setCD(val.get('done')).c,
             textDecoration: setCD(val.get('done')).d,
         }}>
-        {`${outOfWeek(val.get('dueDate'))} ${val.get('time')} ${val.get('name')}`}
+        {`${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}`}
       </li>) 
     return {
       d: day,
@@ -339,6 +324,12 @@ export default class Todo extends React.Component {
 
   updateTime(d, t) {
     this.setState({dueDate: d, time: t})
+    const time = {
+      time: t,
+      dueDate: d
+    }
+    this.props.actions.editTodo(this.state.id, time);
+    this.setState({ time: '', dateSetter: false });
   }
 
   kanbanOff() {
@@ -360,13 +351,7 @@ export default class Todo extends React.Component {
     this.setState({prio: e.target.value, filter: 'prio'})
   }
 
-  editTime() {
-    const time = {
-      time: this.state.time,
-      dueDate: this.state.dueDate
-    }
-    this.props.actions.editTodo(this.state.id, time);
-    this.setState({ dateSetter: false });
+  editTime(d,t) {
   }
 
   toggleDone() {
@@ -391,7 +376,6 @@ export default class Todo extends React.Component {
 
   render() {
     const edits = this.edits();
-    const todos = this.todos();
     const week = this.week();
     const cards = this.cards(this.state.dueDate, this.state.filter);
     return (

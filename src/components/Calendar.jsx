@@ -18,11 +18,15 @@ export default class Calendar extends Component {
     };
     this.onClick = this.onClick.bind(this);
     this.onSelect = this.onSelect.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
     this.prevMonth = this.prevMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
     this.renderDates(moment());
     this.renderTime();
-    this.props.update(moment().format('MM-DD-YY'), this.state.time);
+  }
+
+  onSubmit(e) {
+    this.props.update(this.state.formatted, this.state.time);
   }
 
   onClick(e) {
@@ -33,13 +37,11 @@ export default class Calendar extends Component {
       dateid: e.target.id,
       formatted: moment().set('year', year).dayOfYear(day).format('MM-DD-YY'),
     });
-    this.props.update(moment().set('year', year).dayOfYear(day).format('MM-DD-YY'), this.state.time);
   }
 
   onSelect(e) {
     e.preventDefault();
     this.setState({ time: e.target.value });
-    this.props.update(this.state.formatted, e.target.value);
   }
 
   renderDates(date) {
@@ -107,7 +109,7 @@ export default class Calendar extends Component {
           </select>
         </div>
         <div style={{float:'right'}}>
-          <button value="submit" onClick={this.props.handleTimeEdit}>{'submit'}</button>
+          <button value="submit" onClick={this.onSubmit}>{'submit'}</button>
         </div>
       </div>
     );
