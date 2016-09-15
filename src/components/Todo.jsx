@@ -8,6 +8,8 @@ import IoAlert from 'react-icons/lib/io/alert';
 import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import GoCalendar from 'react-icons/lib/go/calendar';
 import GoPlus from 'react-icons/lib/go/plus';
+import Cards from '../containers/Cards';
+import Card from './Card';
 import TodoInput from './TodoInput';
 import { tttf, outOfWeek } from '../utils/TimeUtils'
 import { setCD } from '../utils/GeneralUtils'
@@ -48,10 +50,10 @@ export default class Todo extends React.Component {
     };
     this.onClick = this.onClick.bind(this);
     this.editOff = this.editOff.bind(this);
-    this.kanbanToggle= this.kanbanToggle.bind(this);
     this.toggle = this.toggle.bind(this);
     this.newTodo = this.newTodo.bind(this);
     this.toggleDone = this.toggleDone.bind(this);
+    this.setDone = this.setDone.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAgenda = this.handleAgenda.bind(this);
     this.prioSelect = this.prioSelect.bind(this);
@@ -84,10 +86,6 @@ export default class Todo extends React.Component {
   handleNameUpdate(value, id) {
     this.setState({ name: value });
     this.editID(id);
-  }
-
-  kanbanToggle() {
-    this.setState({viewDate: !this.state.viewDate, dueDate: ''})
   }
 
   prioSelect() {
@@ -136,7 +134,7 @@ export default class Todo extends React.Component {
             const a = this.state.tagArray;
             a.push(e.target.value.trim());
             this.setState({tagArray: a});
-            }
+          }
         }
         if (this.state.editView == true && [e.target.id] != 'input') {
           const idx = this.props.editList.findIndex(ptr => ptr.val == [e.target.id]);
@@ -146,15 +144,13 @@ export default class Todo extends React.Component {
             document.getElementById(this.props.editList[idx + 1].val).focus();
           }
         }
-        /* else if (String([e.target.id]).replace(/\d/g,'') == 'sub') { */
-        /* 	}); */
-        /* } */
       }
     }
   }
 
   onClick(e) {
     e.preventDefault();
+    console.log(e.target.id)
     const temp = this.props.tasks.get(e.target.id);
     this.setState({
       id: temp.get('id'),
@@ -235,13 +231,13 @@ export default class Todo extends React.Component {
             padding: 0, 
             margin: 0
         }}>
-        <li id={`${day}`} onClick={(e) => this.handleAgenda(e)} > 
+        <li id={`${day}`}> 
           {`${day} `} 
           <span className='todo-count'>
             {this.props.tasks.filter(task => task.get('dueDate') == day).size}
           </span>
         </li>
-        </ul>)
+      </ul>)
     return week;
   }
 
@@ -262,61 +258,21 @@ export default class Todo extends React.Component {
     });
   }
 
+  cards(state) {
+    const { currentWeek, tasks } = this.props
+    return this.props.tasks.filter(task => task.get('done') == state).entrySeq().map(([key, val]) => 
+      <Card
+        idx={val.get('idx')}
+        id={val.get('id')}
+        done={state}
+        text={`${val.get('dueDate')} ${val.get('time')} ${val.get('name')}`}
+      />
+    ) 
+  }
+
   handleAgenda(e) {
     const day = e.target.id;
     this.setState({dueDate: day, viewDate: true, filter: ''});
-  }
-
-  cards(day, filter) {
-    let sorted = []
-    let inweek = false
-    if (filter !== '') {
-      sorted = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get(filter) == this.state.filterval)
-    }
-    else {
-      const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day || this.props.currentWeek.includes(task.get('dueDate')) == false);
-      const sorted2 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == day)
-      this.state.dueDate == '' ? sorted = sorted1 : sorted = sorted2
-      this.props.currentWeek.includes(this.state.dueDate) ? inweek = true : inweek= false
-    }
-      const sorted1 = this.props.tasks.sort((a,b) => tttf(a.get('time')).localeCompare(tttf(b.get('time')))).filter(task => task.get('dueDate') == '' || this.props.currentWeek.includes(task.get('dueDate')) == false);
-    const zero = sorted.filter(task => task.get('done') == 0).entrySeq().map(([key, val]) => 
-      <li 
-        id={val.get('idx')}
-        onClick={(e) => this.onClick(e)}
-        style={{
-          color: setCD(val.get('done'), colors.color.blue).c,
-            textDecoration: setCD(val.get('done')).d,
-        }}>
-        {!inweek ?  `${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}` : `${val.get('time')} ${val.get('name')}`}
-      </li>) 
-    const one = sorted.filter(task => task.get('done') == 1).entrySeq().map(([key, val]) => 
-      <li 
-        id={val.get('idx')}
-        onClick={(e) => this.onClick(e)}
-        style={{
-          color: setCD(val.get('done')).c,
-            textDecoration: setCD(val.get('done')).d,
-        }}>
-        {!inweek ?  `${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}` : `${val.get('time')} ${val.get('name')}`}
-      </li>) 
-    const two = sorted.filter(task => task.get('done') == 2).entrySeq().map(([key, val]) => 
-      <li 
-        id={val.get('idx')}
-        onClick={(e) => this.onClick(e)}
-        style={{
-          color: setCD(val.get('done')).c,
-            textDecoration: setCD(val.get('done')).d,
-        }}>
-        {!inweek ?  `${outOfWeek(`${val.get('dueDate')} ${tttf(val.get('time'))}`)} ${val.get('name')}` : `${val.get('time')} ${val.get('name')}`}
-      </li>) 
-    return {
-      d: day,
-      z: zero,
-      o: one,
-      t: two,
-      s: sorted1.size
-    }
   }
 
   handleDelete(e) {
@@ -365,10 +321,22 @@ export default class Todo extends React.Component {
     this.props.actions.editTodo(this.state.id, done);
   }
 
+  setDone(id, d) {
+    if(this.state.id === id) {
+      const done = {
+        done: d
+      }
+      this.setState({done: d})
+      this.props.actions.editTodo(this.state.id, done);
+    }
+  }
+
   render() {
     const edits = this.edits();
     const week = this.week();
-    const cards = this.cards(this.state.dueDate, this.state.filter);
+    const z = this.cards(0)
+    const o = this.cards(1)
+    const t = this.cards(2)
     return (
       <div className="Grid Grid--flexCells" >
         <div className="Grid-cell">
@@ -459,34 +427,20 @@ export default class Todo extends React.Component {
                             clear filters
                           </button>
                         </div>
-                          <div className='card-container'>
-                        <div className='week-container' style={{
-                          display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
-                              {week}
-                              <h5 style={{margin: 0, padding: 0, 
-                                color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> not in week 
-                                <span className="todo-count">
-                                  {cards.s}
-                                </span>
-  </h5>
-                              </div>
-                            <div className ="card">
-                              <ul style={{padding: 0}}>
-                                {cards.z}
-                              </ul>
-                            </div>
-                            <div className ="card">
-                              <ul style={{padding: 0}}>
-                                {cards.o}
-                              </ul>
-                            </div>
-                            <div className ="card">
-                              <ul style={{padding: 0}}>
-                                {cards.t}
-                              </ul>
-                            </div>
+                        <div className='card-container'>
+                          <div className='week-container' style={{
+                            display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
+                            {week}
+                            <h5 style={{margin: 0, padding: 0, 
+                              color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> not in week 
+                              <span className="todo-count">
+                                {z.size}
+                              </span>
+                            </h5>
                           </div>
-                      </ReactCSSTransitionGroup>
+                          <Cards z={z} o={o} t={t} update={this.setDone} onClick={this.onClick}/>
+  </div>
+</ReactCSSTransitionGroup>
                     </div>
                   </div>
                 </div>
