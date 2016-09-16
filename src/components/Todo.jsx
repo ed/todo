@@ -8,11 +8,11 @@ import IoAlert from 'react-icons/lib/io/alert';
 import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import GoCalendar from 'react-icons/lib/go/calendar';
 import GoPlus from 'react-icons/lib/go/plus';
-import Cards from '../containers/Cards';
+import Cards from './Cards';
 import Card from './Card';
 import TodoInput from './TodoInput';
-import { tttf, outOfWeek } from '../utils/TimeUtils'
-import { setCD } from '../utils/GeneralUtils'
+import { tttf, outOfWeek, agenda } from '../utils/TimeUtils'
+import { setCD, createEdits } from '../utils/GeneralUtils'
 
 const Immutable = require('immutable');
 const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
@@ -21,8 +21,7 @@ export default class Todo extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.object.isRequired,
-    tasks: React.PropTypes.instanceOf(Immutable.List),
-    editList: React.PropTypes.array.isRequired,
+    tasks: React.PropTypes.instanceOf(Immutable.Map),
   }
 
   constructor(props) {
@@ -48,6 +47,8 @@ export default class Todo extends React.Component {
       num: 0,
       done: 0,
     };
+    this.editList = createEdits();
+    this.currentWeek = agenda();
     this.onClick = this.onClick.bind(this);
     this.editOff = this.editOff.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -108,7 +109,7 @@ export default class Todo extends React.Component {
       prio: p
     }
     this.setState({prio: p})
-    this.props.actions.editTodo(this.state.id, temp);
+    this.props.actions.editTodo(this.state.idx, temp);
   }
 
 
@@ -118,7 +119,7 @@ export default class Todo extends React.Component {
       if (this.state.inputting == false && (e.target.id == '' || e.target.id == 'input')) {
         this.setState({inputting: true});
       }
-      else if (e.target.value) {
+      else if (e.target.value && e.target.id) {
         const temp = {
           [e.target.id]: e.target.value.trim(),
           dueDate: this.state.dueDate,
@@ -129,7 +130,7 @@ export default class Todo extends React.Component {
           this.props.actions.addTask(temp, 'todo');
           this.setState({ inputting: false, input: '' });
         } else {
-          this.props.actions.editTodo(this.state.id, temp);
+          this.props.actions.editTodo(this.state.idx, temp);
           if ([e.target.id] == 'tags') {
             const a = this.state.tagArray;
             a.push(e.target.value.trim());
@@ -137,11 +138,11 @@ export default class Todo extends React.Component {
           }
         }
         if (this.state.editView == true && [e.target.id] != 'input') {
-          const idx = this.props.editList.findIndex(ptr => ptr.val == [e.target.id]);
-          if (idx + 1 == this.props.editList.length) {
-            document.getElementById(this.props.editList[idx].val).focus();
-          } else if (idx + 1 < this.props.editList.length) {
-            document.getElementById(this.props.editList[idx + 1].val).focus();
+          const idx = this.editList.findIndex(ptr => ptr.val == [e.target.id]);
+          if (idx + 1 == this.editList.length) {
+            document.getElementById(this.editList[idx].val).focus();
+          } else if (idx + 1 < this.editList.length) {
+            document.getElementById(this.editList[idx + 1].val).focus();
           }
         }
       }
@@ -150,40 +151,35 @@ export default class Todo extends React.Component {
 
   onClick(e) {
     e.preventDefault();
-    console.log(e.target.id)
-    const temp = this.props.tasks.get(e.target.id);
+    const temp = this.props.tasks.get(parseInt(e.target.id));
     this.setState({
-      id: temp.get('id'),
-      name: temp.get('name'),
-      dueDate: temp.get('dueDate'),
-      time: temp.get('time'),
-      tags: temp.get('tags'),
-      prio: temp.get('prio'),
-      users: temp.get('users'),
-      idx: temp.get('idx'),
-      sub: temp.get('sub'),
-      done: temp.get('done'),
+      id: temp.id,
+      name: temp.name,
+      dueDate: temp.dueDate,
+      time: temp.time,
+      tags: temp.tags,
+      prio: temp.prio,
+      idx: temp.idx,
+      done: temp.done,
+      editView: true,
     });
-    this.setState({ editView: true });
   }
 
   editID(id) {
     const temp = this.props.tasks.get(id);
     this.setState({
-      id: temp.get('id'),
-      name: temp.get('name'),
-      dueDate: temp.get('dueDate'),
-      time: temp.get('time'),
-      tags: temp.get('tags'),
-      prio: temp.get('prio'),
-      idx: temp.get('idx'),
-      users: temp.get('users'),
-      sub: temp.get('sub'),
-      done: temp.get('done'),
+      id: temp.id,
+      name: temp.name,
+      dueDate: temp.dueDate,
+      time: temp.time,
+      tags: temp.tags,
+      prio: temp.prio,
+      idx: temp.idx,
+      done: temp.done,
       num: this.state.num+1,
       editView: true,
     });
-    document.getElementById(temp.get('idx')).focus();
+    document.getElementById(temp.idx).focus();
   }
 
   editOff() {
@@ -208,7 +204,7 @@ export default class Todo extends React.Component {
   }
 
   edits() {
-    const edits = this.props.editList.map((val, key) =>
+    const edits = this.editList.map((val, key) =>
       <textarea
         style={{textAlign: 'center'}}
         className={val.cname}
@@ -224,7 +220,7 @@ export default class Todo extends React.Component {
   }
 
   week() {
-    const week = this.props.currentWeek.map((day, idx) =>
+    const week = this.currentWeek.map((day, idx) =>
       <ul  id={`${day}`} key={`day${idx}`} 
         style={{ 
           color: day == this.state.dueDate ? colors.color.blue: colors.color.darkgrey, 
@@ -234,7 +230,6 @@ export default class Todo extends React.Component {
         <li id={`${day}`}> 
           {`${day} `} 
           <span className='todo-count'>
-            {this.props.tasks.filter(task => task.get('dueDate') == day).size}
           </span>
         </li>
       </ul>)
@@ -259,7 +254,7 @@ export default class Todo extends React.Component {
   }
 
   cards(state) {
-    const { currentWeek, tasks } = this.props
+    const { tasks } = this.props
     return this.props.tasks.filter(task => task.get('done') == state).entrySeq().map(([key, val]) => 
       <Card
         idx={val.get('idx')}
@@ -287,7 +282,7 @@ export default class Todo extends React.Component {
       time: t,
       dueDate: d
     }
-    this.props.actions.editTodo(this.state.id, time);
+    this.props.actions.editTodo(this.state.idx, time);
     this.setState({ time: '', dateSetter: false });
   }
 
@@ -314,29 +309,20 @@ export default class Todo extends React.Component {
         d = 0;
         break;
     }
-    const done = {
-      done: d
-    }
     this.setState({done: d})
-    this.props.actions.editTodo(this.state.id, done);
+    this.props.actions.setDone(this.state.idx, d);
   }
 
   setDone(id, d) {
     if(this.state.id === id) {
-      const done = {
-        done: d
-      }
       this.setState({done: d})
-      this.props.actions.editTodo(this.state.id, done);
+      this.props.actions.setDone(this.state.idx, d);
     }
   }
 
   render() {
     const edits = this.edits();
     const week = this.week();
-    const z = this.cards(0)
-    const o = this.cards(1)
-    const t = this.cards(2)
     return (
       <div className="Grid Grid--flexCells" >
         <div className="Grid-cell">
@@ -434,11 +420,10 @@ export default class Todo extends React.Component {
                             <h5 style={{margin: 0, padding: 0, 
                               color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> not in week 
                               <span className="todo-count">
-                                {z.size}
                               </span>
                             </h5>
                           </div>
-                          <Cards z={z} o={o} t={t} update={this.setDone} onClick={this.onClick}/>
+                        <Cards onClick={this.onClick} update={this.setDone}/>
   </div>
 </ReactCSSTransitionGroup>
                     </div>

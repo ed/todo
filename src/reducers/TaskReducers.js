@@ -1,35 +1,29 @@
-import { ADD_TASK, DELETE_TASK, EDIT_TODO, CREATE_LIST, MOVE_TO, DELETE_SECTION_ITEM } from '../constants/ActionTypes'
+import { ADD_TASK, DELETE_TASK, EDIT_TODO, SET_DONE } from '../constants/ActionTypes'
 import { List, Map, OrderedMap} from 'immutable';
 
-export default function taskReducer(state=List(), action) {
+export default function taskReducer(state=Map(), action) {
   switch(action.type) {
     case ADD_TASK:
-      return state.push(
-        Map({id: action.id, 
-          timestamp: action.timestamp, 
-          task: action.task, 
-          name: action.obj.input,
-          location: action.location,
-          time: action.obj.time,
-          dueDate: action.obj.dueDate,
-          tags: action.tags,
-          prio: action.prio,
-          users: action.users,
-          sub: action.sub,
-          idx: action.idx,
-          done: 0})
-      );
+      return state.set(action.idx, {id: action.id, 
+        timestamp: action.timestamp, 
+        idx: action.idx,
+        name: action.obj.input,
+        time: action.obj.time,
+        dueDate: action.obj.dueDate,
+        tags: action.tags,
+        prio: action.prio,
+        done: 0})
     case DELETE_TASK:
-      return state.filter( task => task.get('id') !== action.id ); 
+      return state.filter(task => task.id !== action.id ); 
     case EDIT_TODO:
-      let temp = state.findIndex(map => map.get('id') === action.id);
-      for (var keys in action.obj) {
-        state = state.update(temp, map => map.set(keys, action.obj[keys]))
-      }
+      const KEYS = Object.keys(action.obj)
+      return state.update(action.id, t => {
+        return KEYS.reduce((map, key) => {
+          return map.set(key, state.get(key))}),t})
+    case SET_DONE:
+      state = state.update(action.id, t => Object.assign({},t,{ done : action.done}))
       return state;
-    case MOVE_TO:
-      let temp2 = state.findIndex(map => map.get(action.id));
-      return state.update(temp2, map => map.set('location', action.section))
+
     default:
       return state;
   }

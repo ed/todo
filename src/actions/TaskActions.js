@@ -9,10 +9,7 @@ export const addTask = (obj, task) => {
     id: uuid.v4(),
     timestamp: moment(Date.now()).format("h:mm a"),
     task: task,
-    location: 'main',
     prio: '',
-    sub: '',
-    users: '',
     idx: idx++,
     tags: '',
     obj,
@@ -34,10 +31,11 @@ export const editTodo = (current, obj) => {
   }
 }
 
-export const moveTo = (id, section) => {
+export const setDone = (id, done) => {
   return {
-    type: types.MOVE_TO,
+    type: types.SET_DONE,
     id: id,
-    section: section
+    done: done
   }
 }
+

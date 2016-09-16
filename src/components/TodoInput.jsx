@@ -17,8 +17,7 @@ export default class TodoInput extends React.Component {
         const temp = {
           name: e.target.value.trim(),
         };
-        this.props.actions.editTodo(this.props.k, temp);
-        this.props.update(e.target.value.trim(), this.props.id);
+        this.props.actions.editTodo(this.props.id, temp);
         this.setState({name: e.target.value.trim()});
       }
     }

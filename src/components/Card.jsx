@@ -8,7 +8,8 @@ import { setCD } from '../utils/GeneralUtils'
 const cardSource = {
   beginDrag(props) {
     return {
-      id: props.id
+      id: props.id,
+      done: props.done
     };
   },
 

@@ -1,11 +1,12 @@
 import React, { PropTypes, Component } from 'react';
 import { CARD } from '../constants/ItemTypes';
 import { DropTarget } from 'react-dnd';
+import Card from '../components/Card'
 
 
 const cardTarget = {
   drop(props, monitor) {
-    if (props.id != monitor.getItem().idx) {
+    if (props.id != monitor.getItem().done) {
       props.update(monitor.getItem().id, props.id);
     }
   }
@@ -26,14 +27,14 @@ export default class Board extends Component {
   };
 
   render() {
-    const { canDrop, isOver, connectDropTarget, contents, onClick, edit} = this.props;
+    const { canDrop, isOver, connectDropTarget,cards, onClick, edit} = this.props;
     const isActive = canDrop && isOver;
     return connectDropTarget(
       <div className="card">
         <ul>
-          {contents.map(c => 
-            <li key={c.props.id} id={c.props.idx} onDrag={(e) => onClick(e)} onClick={(e) => onClick(e)}>
-            {c}
+          {cards.map(c => 
+            <li key={c.id} id={c.idx} onDrag={(e) => onClick(e)} onClick={(e) => onClick(e)}>
+              <Card id={c.id} text={c.name} idx={c.idx} done={c.done} />
           </li>
         )}
       </ul>
