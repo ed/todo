@@ -42,7 +42,6 @@ export default class Todo extends React.Component {
       prio: '',
       users: '',
       sub: '',
-      idx: 0,
       num: 0,
       done: 0,
     };
@@ -64,12 +63,6 @@ export default class Todo extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.updateTime = this.updateTime.bind(this);
-  }
-
-  componentDidUpdate() {
-    if (this.props.tasks.size > this.state.num) {
-      this.editID(this.props.tasks.size-1);
-    }
   }
 
   componentDidMount() {
@@ -110,7 +103,7 @@ export default class Todo extends React.Component {
       prio: p
     }
     this.setState({prio: p})
-    this.props.actions.editTodo(this.state.idx, temp);
+    this.props.actions.editTodo(this.state.id, temp);
   }
 
 
@@ -128,11 +121,10 @@ export default class Todo extends React.Component {
         };
         this.setState({ [e.target.id]: e.target.value });
         if ([e.target.id] == 'input') {
-          console.log(temp)
           this.props.actions.addTask(temp, 'todo');
-          this.setState({ inputting: false, input: '' });
+          this.setState({ inputting: false, input: '', editView: true });
         } else {
-          this.props.actions.editTodo(this.state.idx, temp);
+          this.props.actions.editTodo(this.state.id, temp);
           if ([e.target.id] == 'tags') {
             const a = this.state.tagArray;
             a.push(e.target.value.trim());
@@ -153,14 +145,13 @@ export default class Todo extends React.Component {
 
   onClick(e) {
     e.preventDefault();
-    const temp = this.props.tasks.get(parseInt(e.target.id));
+    const temp = this.props.tasks.get(e.target.id);
     this.setState({
       id: temp.id,
       name: temp.name,
       time: temp.time,
       tags: temp.tags,
       prio: temp.prio,
-      idx: temp.idx,
       done: temp.done,
       editView: true,
     });
@@ -175,7 +166,6 @@ export default class Todo extends React.Component {
       time: temp.time,
       tags: temp.tags,
       prio: temp.prio,
-      idx: temp.idx,
       done: temp.done,
       num: this.state.num+1,
       editView: true,
@@ -191,7 +181,6 @@ export default class Todo extends React.Component {
       id: '',
       filter: '',
       tags: '',
-      idx: 0,
       done: 0,
       prio: '',
       users: '',
@@ -248,7 +237,6 @@ export default class Todo extends React.Component {
       input: '',
       id: '',
       tags: '',
-      idx: 0,
       done: 0,
       prio: '',
       time: '',
@@ -273,7 +261,7 @@ export default class Todo extends React.Component {
       time: t,
       date: d
     }
-    this.props.actions.editTodo(this.state.idx, time);
+    this.props.actions.editTodo(this.state.id, time);
     this.setState({dateSetter: false });
   }
 
@@ -292,8 +280,8 @@ export default class Todo extends React.Component {
     this.setState({filterval: a, filter: b})
   }
 
-  handleDrag(idx) {
-    this.editID(idx);
+  handleDrag(id) {
+    this.editID(id);
   }
 
   toggleDone() {
@@ -311,14 +299,14 @@ export default class Todo extends React.Component {
     }
     this.setState({done: d})
     const o = { done: d }
-    this.props.actions.editTodo(this.state.idx, o);
+    this.props.actions.editTodo(this.state.id, o);
   }
 
   setDone(id, d) {
     if(this.state.id === id) {
       this.setState({done: d})
       const o = { done: d }
-      this.props.actions.editTodo(this.state.idx, o);
+      this.props.actions.editTodo(this.state.id, o);
     }
   }
 
@@ -359,7 +347,7 @@ export default class Todo extends React.Component {
                         k={this.state.id}
                         type={"todo"}
                         done={this.state.done}
-                        id={this.state.idx}
+                        id={this.state.id}
                         update={this.handleNameUpdate.bind(this)} 
                         name={this.state.name}
                         actions={this.props.actions}
@@ -399,7 +387,7 @@ export default class Todo extends React.Component {
                         {week}
                         <h5 style={{margin: 0, padding: 0, 
                           color: this.state.date == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
-                          <span className="todo-count">
+                          <span className="todo-count" style={{margin: '5px'}}>
                             {this.props.tasks.size}
                           </span>
                         </h5>

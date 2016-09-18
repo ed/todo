@@ -7,7 +7,7 @@ import { setCD } from '../utils/GeneralUtils'
    */
 const cardSource = {
   beginDrag(props) {
-    props.update(props.idx);
+    props.update(props.id);
     return {
       id: props.id,
       done: props.done
@@ -33,10 +33,10 @@ export default class Card extends React.Component {
   };
 
   render() {
-    const { isDragging, connectDragSource, done, text, idx } = this.props;
+    const { isDragging, connectDragSource, done, text, id } = this.props;
     const { c, d } = setCD(done);
     return connectDragSource(
-      <div id={idx} style={{ textDecoration: d, color: c, opacity: isDragging ? 0.5 : 1 }}>
+      <div id={id} style={{ textDecoration: d, color: c, opacity: isDragging ? 0.5 : 1 }}>
           {text}
       </div>
     );

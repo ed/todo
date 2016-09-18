@@ -32,8 +32,8 @@ export default class Board extends Component {
       <div className="card">
         <ul>
           {cards.map(c => 
-            <li key={c.id} id={c.idx} onClick={(e) => onClick(e)}>
-              <Card id={c.id} text={isInWeek(c.date) ? `${c.time} ${c.name}` : `${outOfWeek(c.date)} ${c.time} ${c.name}`} update={edit} idx={c.idx} done={c.done} />
+            <li key={c.id} id={c.id} onClick={(e) => onClick(e)}>
+              <Card id={c.id} text={isInWeek(c.date) ? `${c.time} ${c.name}` : `${outOfWeek(c.date)} ${c.time} ${c.name}`} update={edit} done={c.done} />
           </li>
         )}
       </ul>

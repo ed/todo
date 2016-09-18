@@ -1,12 +1,14 @@
 import { ADD_TASK, DELETE_TASK, EDIT_TODO} from '../constants/ActionTypes'
 import { Map } from 'immutable';
 
-export default function taskReducer(state=Map(), action) {
+
+export default function taskReducer(state, action) {
+  state = state ? state : Map();
   switch(action.type) {
     case ADD_TASK:
-      return state.set(action.idx, {id: action.id, 
+      return state.set(action.id, {
+        id: action.id, 
         timestamp: action.timestamp, 
-        idx: action.idx,
         name: action.obj.input,
         time: action.obj.time,
         date: action.obj.date,
@@ -18,7 +20,6 @@ export default function taskReducer(state=Map(), action) {
     case EDIT_TODO:
       state = state.update(action.id, t => Object.assign({},t, action.obj))
       return state;
-
     default:
       return state;
   }
