@@ -12,5 +12,12 @@ exports.color = {
   lightgrey:  '#CCDDEE',
   darkgrey:   '#A19585',
   pink:       '#FFAAFF',
+  baseblue:   '#5ACBFF',
+  basegreen:  '#52FF9D',
+  baselime:  '#9FE096',
+  baseorange: '#FF7652',
+  basegrey : '#565656',
+  basewhite: '#F9F9F9',
+  basered: '#F92D2A',
 }
 

@@ -123,6 +123,7 @@ export default class Todo extends React.Component {
         if ([e.target.id] == 'input') {
           this.props.actions.addTask(temp, 'todo');
           this.setState({ inputting: false, input: '', editView: true });
+          this.editID(this.props.tasks.keyOf(this.props.tasks.last()))
         } else {
           this.props.actions.editTodo(this.state.id, temp);
           if ([e.target.id] == 'tags') {
@@ -216,7 +217,7 @@ export default class Todo extends React.Component {
     const week = this.currentWeek.map((day, idx) =>
       <ul  id={`${day}`} key={`day${idx}`} 
         style={{ 
-          color: day == this.state.date ? colors.color.blue: colors.color.darkgrey, 
+          color: day == this.state.date ? colors.color.baseblue: colors.color.basegrey, 
             padding: 0, 
             margin: 0
         }}>
@@ -315,18 +316,18 @@ export default class Todo extends React.Component {
     const week = this.week();
     return (
       <div className="Grid Grid--flexCells" >
-        <div className="Grid-cell" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
+        <div className="Grid-cell" style={{color: colors.color.basegrey, fontSize: 16, flexDirection: 'column' }}>
           <div className="Aligner" style={{width: "100%", height: '100%'}}>
-            <div className="Aligner-item Aligner-item--fixed">
-              <div className='edits' >
+            <div className="Aligner-item Aligner-item--fixed" style={{background: colors.color.basewhite, borderRadius: '20px', padding: '10px'}} >
+              <div className='edits' style={{display:'flex', justifyContent:'center'}} >
                 <ReactCSSTransitionGroup
                   transitionName="edit-trans"
                   transitionEnterTimeout={500}
                   transitionLeaveTimeout={300}
                 >
                   {this.state.editView ?
-                    <div style={{textAlign: 'center'}}>
-                      <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
+                    <div style={{background: colors.color.basewhite, textAlign: 'center'}}>
+                      <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.basegrey} />
                       <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
                       <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
                       <IoAlert size={22} onClick={this.prioSelect} color={colors.color.orange}/>
@@ -340,7 +341,8 @@ export default class Todo extends React.Component {
                           {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
                         </div>
                       </ReactCSSTransitionGroup>
-                      <textarea style={{fontSize: 14, color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.date} ${this.state.time}`}/>
+                      <div style={{flexDirection: 'column', display: 'flex'}}>
+                        <textarea style={{fontSize: 14, color: colors.color.baseblue, textAlign: 'center'}} readOnly value={`${this.state.date} ${this.state.time}`}/>
                       <TodoInput
                         maxLength={30}
                         key={this.state.id}
@@ -353,6 +355,7 @@ export default class Todo extends React.Component {
                         actions={this.props.actions}
                       />
                       {edits}
+                    </div>
                       {this.state.prio}
                     </div>
                       : null}
@@ -364,7 +367,9 @@ export default class Todo extends React.Component {
                     transitionLeaveTimeout={200}
                   >
                     <div className='filters' style={{
-                      display: 'flex', justifyContent: 'center'}}>
+                      display: 'flex', justifyContent: 'center',
+                      background: '#FFBA77'
+                    }}>
                       <select id='tags' onChange={this.filter} value='a'>
                         <option value="a" disabled> filter by tag </option>
                         <option value = 'none'>none</option>
@@ -386,7 +391,7 @@ export default class Todo extends React.Component {
                         display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
                         {week}
                         <h5 style={{margin: 0, padding: 0, 
-                          color: this.state.date == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
+                          color: this.state.date == '' ? colors.color.baseblue : colors.color.basegreen, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
                           <span className="todo-count" style={{margin: '5px'}}>
                             {this.props.tasks.size}
                           </span>
@@ -395,9 +400,9 @@ export default class Todo extends React.Component {
                       <Cards val={{val: this.state.filterval, filter: this.state.filter}} edit={this.handleDrag} date={this.state.date} onClick={this.onClick} update={this.setDone}/>
                     </div>
                   </ReactCSSTransitionGroup>
-
-                  <div>
+              <div>
                     {this.state.inputting ? 
+              <div style={{display:'flex', justifyContent:'center'}} >
                       <textarea
                         autoFocus
                         className="todo-name-setter"
@@ -407,9 +412,10 @@ export default class Todo extends React.Component {
                         value={this.state.input}
                         onChange={this.onChange}
                         placeholder="add todo"
-                        style={{color: colors.color.darkgrey, textAlign: "center"}}
+                        style={{color: colors.color.basegrey, textAlign: "center"}}
                       />
-                        : <GoPlus size={30} color={colors.color.blue} onClick={this.newTodo}/>}
+                        </div>
+                        : <GoPlus size={30} color={colors.color.baseblue} onClick={this.newTodo}/>}
                       </div>
                     </div>
                   </div>

@@ -1,7 +1,8 @@
 html, body {
-	height: 100%;
 	margin: 0px;
+	height: 100%;
 	font-family: 'Roboto', sans-serif;
+	background: linear-gradient(to bottom,#5ACBFF 72%, #565656 18%) fixed
 }
 
 #app {
@@ -15,16 +16,15 @@ ul
 }
 
 textarea {
-	width: 100%;
 	resize: none;
 	border: none;
 	outline: none;
-	white-space: nowrap;
+	white-space: pre-line;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-family: 'Roboto', sans-serif;
 	font-size: 18px;
-	color: '#A19585';
+	color: #F9F9F9;
 	transition-duration: 1s;
 	height: 25px;
 }
@@ -34,73 +34,73 @@ textarea:focus {
 }
 
 .edit-trans-enter {
-  opacity: 0.01;
+	opacity: 0.01;
 }
 
 .edit-trans-enter.edit-trans-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in-out;
+	opacity: 1;
+	transition: opacity 500ms ease-in-out;
 }
 
 .edit-trans-leave {
-  opacity: 1;
+	opacity: 1;
 }
 
 .edit-trans-leave.edit-trans-leave-active {
-  opacity: 0.01;
-  transition: opacity 300ms ease-in-out;
+	opacity: 0.01;
+	transition: opacity 300ms ease-in-out;
 }
 
 .calendar-trans-enter {
-  opacity: 0.01;
+	opacity: 0.01;
 }
 
 .calendar-trans-enter.calendar-trans-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in-out;
+	opacity: 1;
+	transition: opacity 500ms ease-in-out;
 }
 
 .calendar-trans-leave {
-  opacity: 1;
+	opacity: 1;
 }
 
 .calendar-trans-leave.calendar-trans-leave-active {
-  opacity: 0.01;
-  transition: opacity 300ms ease-in-out;
+	opacity: 0.01;
+	transition: opacity 300ms ease-in-out;
 }
 
 
 .todo-trans-enter {
-  opacity: 0.01;
+	opacity: 0.01;
 }
 
 .todo-trans-enter.todo-trans-enter-active {
-  opacity: 1;
-  transition: opacity 200ms ease-in-out;
+	opacity: 1;
+	transition: opacity 200ms ease-in-out;
 }
 
 .todo-trans-leave {
-  opacity: 1;
+	opacity: 1;
 }
 
 .todo-trans-leave.todo-trans-leave-active {
-  opacity: 0.01;
-  transition: opacity 200ms ease-in-out;
+	opacity: 0.01;
+	transition: opacity 200ms ease-in-out;
 }
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    color:    #CCDDEE;
+	color:    #CCDDEE;
 }
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color:    #CCDDEE;
-   opacity:  1;
+	color:    #CCDDEE;
+	opacity:  1;
 }
 ::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color:    #CCDDEE;
-   opacity:  1;
+	color:    #CCDDEE;
+	opacity:  1;
 }
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
-   color:    #CCDDEE;
+	color:    #CCDDEE;
 }
 
 .card-container {
@@ -109,9 +109,9 @@ textarea:focus {
 	justify-content: center;
 }
 .card {
-	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    border-radius: 5px; /* 5px rounded corners */
+	box-shadow: 4px 8px 10px 0 #565656;
+	transition: 0.3s;
+	border-radius: 10px; /* 5px rounded corners */
 	width: 350px;
 	height: 350px;
 	padding: 5px;
@@ -121,13 +121,23 @@ textarea:focus {
 	text-overflow: ellipsis;
 }
 .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+	box-shadow: 4px 8px 16px 0 #565656;
 }
 
 .todo-count {
 	color: white;
 	padding: 2px 5px;
 	border-radius: 20px;
-	background: #A19585;
+	background: #f9f9f9;
 	font-size: 12px;
 }
+
+.edits {
+	display: flex;
+	background: #FFBA77;
+	border-radius: 25px;
+	justify-content: center;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
