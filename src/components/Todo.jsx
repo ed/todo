@@ -56,6 +56,7 @@ export default class Todo extends React.Component {
     this.toggleDone = this.toggleDone.bind(this);
     this.setDone = this.setDone.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleDrag = this.handleDrag.bind(this);
     this.handleAgenda = this.handleAgenda.bind(this);
     this.prioSelect = this.prioSelect.bind(this);
     this.filter = this.filter.bind(this);
@@ -156,7 +157,6 @@ export default class Todo extends React.Component {
     this.setState({
       id: temp.id,
       name: temp.name,
-      date: temp.date,
       time: temp.time,
       tags: temp.tags,
       prio: temp.prio,
@@ -269,13 +269,12 @@ export default class Todo extends React.Component {
   }
 
   updateTime(d, t) {
-    this.setState({date: d, time: t})
     const time = {
       time: t,
       date: d
     }
     this.props.actions.editTodo(this.state.idx, time);
-    this.setState({ time: '', dateSetter: false });
+    this.setState({dateSetter: false });
   }
 
   clearFilter(e) {
@@ -291,6 +290,10 @@ export default class Todo extends React.Component {
       a = ''
     }
     this.setState({filterval: a, filter: b})
+  }
+
+  handleDrag(idx) {
+    this.editID(idx);
   }
 
   toggleDone() {
@@ -324,113 +327,106 @@ export default class Todo extends React.Component {
     const week = this.week();
     return (
       <div className="Grid Grid--flexCells" >
-        <div className="Grid-cell">
-          <div className="Aligner" style={{width: "100%"}}>
+        <div className="Grid-cell" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
+          <div className="Aligner" style={{width: "100%", height: '100%'}}>
             <div className="Aligner-item Aligner-item--fixed">
-              {this.state.inputting ? 
-                <textarea
-                  autoFocus
-                  className="todo-name-setter"
-                  id="input"
-                  maxLength={30}
-                  ref={(c) => this._input = c}
-                  value={this.state.input}
-                  onChange={this.onChange}
-                  placeholder="add todo"
-                  style={{color: colors.color.darkgrey, textAlign: "center"}}
-                />
-                  : <GoPlus size={30} color={colors.color.blue} onClick={this.newTodo}/>}
-                </div>
-              </div>
-            </div>
-            <div className="Grid-cell">
-              <div className="Aligner" style={{width: "100%"}}>
-                <div className="Aligner-item Aligner-item--fixed">
-                  <ReactCSSTransitionGroup
-                    transitionName="edit-trans"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={300}
-                  >
-                    {this.state.editView ?
-                      <div style={{textAlign: 'center'}}>
-                        <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
-                        <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
-                        <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
-                        <IoAlert size={22} onClick={this.prioSelect} color={colors.color.orange}/>
-                        <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
-                        <ReactCSSTransitionGroup
-                          transitionName="calendar-trans"
-                          transitionEnterTimeout={500}
-                          transitionLeaveTimeout={300}
-                        >
-                          <div className='cal' style={{textAlign: 'center', display: 'flex', justifyContent: 'center'}}>
-                            {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
-                          </div>
-                        </ReactCSSTransitionGroup>
-                        <textarea style={{fontSize: 14, color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.date} ${this.state.time}`}/>
-                        <TodoInput
-                          maxLength={30}
-                          key={this.state.id}
-                          k={this.state.id}
-                          type={"todo"}
-                          done={this.state.done}
-                          id={this.state.idx}
-                          update={this.handleNameUpdate.bind(this)} 
-                          name={this.state.name}
-                          actions={this.props.actions}
-                        />
-                        {edits}
-                        {this.state.prio}
-                      </div>
-                        : null}
+              <div className='edits' >
+                <ReactCSSTransitionGroup
+                  transitionName="edit-trans"
+                  transitionEnterTimeout={500}
+                  transitionLeaveTimeout={300}
+                >
+                  {this.state.editView ?
+                    <div style={{textAlign: 'center'}}>
+                      <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.darkgrey} />
+                      <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
+                      <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
+                      <IoAlert size={22} onClick={this.prioSelect} color={colors.color.orange}/>
+                      <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
+                      <ReactCSSTransitionGroup
+                        transitionName="calendar-trans"
+                        transitionEnterTimeout={500}
+                        transitionLeaveTimeout={300}
+                      >
+                        <div className='cal' style={{textAlign: 'center', display: 'flex', justifyContent: 'center'}}>
+                          {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
+                        </div>
                       </ReactCSSTransitionGroup>
+                      <textarea style={{fontSize: 14, color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.date} ${this.state.time}`}/>
+                      <TodoInput
+                        maxLength={30}
+                        key={this.state.id}
+                        k={this.state.id}
+                        type={"todo"}
+                        done={this.state.done}
+                        id={this.state.idx}
+                        update={this.handleNameUpdate.bind(this)} 
+                        name={this.state.name}
+                        actions={this.props.actions}
+                      />
+                      {edits}
+                      {this.state.prio}
+                    </div>
+                      : null}
+                    </ReactCSSTransitionGroup>
+                  </div>
+                  <ReactCSSTransitionGroup
+                    transitionName="todo-trans"
+                    transitionEnterTimeout={200}
+                    transitionLeaveTimeout={200}
+                  >
+                    <div className='filters' style={{
+                      display: 'flex', justifyContent: 'center'}}>
+                      <select id='tags' onChange={this.filter} value='a'>
+                        <option value="a" disabled> filter by tag </option>
+                        <option value = 'none'>none</option>
+                        {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
+                      </select>
+                      <select id='prio' onChange={this.filter} value='a'>
+                        <option disabled value='a'> filter by priority</option>
+                        <option value = 'none'>none</option>
+                        <option value = 'low'>low</option>
+                        <option value = 'med'>med</option>
+                        <option value = 'high'>high</option>
+                      </select>
+                      <button onClick={this.clearFilter} value="clear filters">
+                        clear filters
+                      </button>
+                    </div>
+                    <div className='card-container'>
+                      <div className='week-container' style={{
+                        display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
+                        {week}
+                        <h5 style={{margin: 0, padding: 0, 
+                          color: this.state.date == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
+                          <span className="todo-count">
+                            {this.props.tasks.size}
+                          </span>
+                        </h5>
+                      </div>
+                      <Cards val={{val: this.state.filterval, filter: this.state.filter}} edit={this.handleDrag} date={this.state.date} onClick={this.onClick} update={this.setDone}/>
+                    </div>
+                  </ReactCSSTransitionGroup>
+
+                  <div>
+                    {this.state.inputting ? 
+                      <textarea
+                        autoFocus
+                        className="todo-name-setter"
+                        id="input"
+                        maxLength={30}
+                        ref={(c) => this._input = c}
+                        value={this.state.input}
+                        onChange={this.onChange}
+                        placeholder="add todo"
+                        style={{color: colors.color.darkgrey, textAlign: "center"}}
+                      />
+                        : <GoPlus size={30} color={colors.color.blue} onClick={this.newTodo}/>}
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="Grid-cell" style={{background: 'white', color: colors.color.darkgrey, fontSize: 16, flexDirection: 'column' }}>
-                  <div className="Aligner" style={{width: "100%", height: '100%'}}>
-                    <div className="Aligner-item Aligner-item--fixed">
-                      <ReactCSSTransitionGroup
-                        transitionName="todo-trans"
-                        transitionEnterTimeout={200}
-                        transitionLeaveTimeout={200}
-                      >
-                        <div className='filters' style={{
-                          display: 'flex', justifyContent: 'center'}}>
-                          <select id='tags' onChange={this.filter} value='a'>
-                            <option value="a" disabled> filter by tag </option>
-                            <option value = 'none'>none</option>
-                            {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
-                          </select>
-                          <select id='prio' onChange={this.filter} value='a'>
-                            <option disabled value='a'> filter by priority</option>
-                            <option value = 'none'>none</option>
-                            <option value = 'low'>low</option>
-                            <option value = 'med'>med</option>
-                            <option value = 'high'>high</option>
-                          </select>
-                          <button onClick={this.clearFilter} value="clear filters">
-                            clear filters
-                          </button>
-                        </div>
-                        <div className='card-container'>
-                          <div className='week-container' style={{
-                            display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
-                            {week}
-                            <h5 style={{margin: 0, padding: 0, 
-                              color: this.state.date == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> not in week 
-                              <span className="todo-count">
-                                {this.props.tasks.filter(task => task.date === '').size}
-                              </span>
-                            </h5>
-                          </div>
-                          <Cards val={{val: this.state.filterval, filter: this.state.filter}} date={this.state.date} onClick={this.onClick} update={this.setDone}/>
-                        </div>
-        </ReactCSSTransitionGroup>
-      </div>
-    </div>
-  </div>
-</div>
+              </div>
     );
   }
 }

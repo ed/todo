@@ -2,7 +2,6 @@ let moment = require('moment')
 
 module.exports = {
 
-
   tttf(t) {
     return moment(t, ['h:mm A']).format('HH:mm');
   },
@@ -25,6 +24,15 @@ module.exports = {
       return '';
     else 
       return date;
+  },
+
+  isInWeek(d) {
+    const currentWeek = module.exports.agenda()
+    return currentWeek.includes(moment(d));
+  },
+
+  compare(a,b) {
+    return moment(a).diff(moment(b));
   },
 
   createTimeInterval: function() {

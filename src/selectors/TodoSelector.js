@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { tttf } from '../utils/TimeUtils'
+import { isInWeek, tttf, compare } from '../utils/TimeUtils'
 
 
 const date = (state, props) => props.date;
@@ -18,11 +18,23 @@ const filter = createSelector(
 const dateFilter = createSelector(
   filter,
   date,
-  (todos, day) => todos.filter(todo => todo.date === day)
+  (todos, day) => {
+    switch (day) {
+    case '':
+        return todos.filter(todo => todo.date === day || !isInWeek(todo.date))
+    default:
+        return todos.filter(todo => todo.date === day)
+    }
+  }
+)
+
+const dateSort = createSelector(
+  dateFilter,
+  (date) => date.sortBy(todo => todo.date)
 )
 
 const timeSort = createSelector(
-  dateFilter,
+  dateSort,
   (date) => date.sort((a,b) => tttf(a.time).localeCompare(tttf(b.time)))
 );
 

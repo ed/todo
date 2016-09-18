@@ -6,13 +6,22 @@ import Boards from '../containers/Boards';
 
 @DragDropContext(HTML5Backend)
 export default class Cards extends Component {
+  constructor(props) {
+    super(props)
+    this._onDrop = this._onDrop.bind(this);
+  }
+
   render() {
     return (
       <div style={{display: 'flex'}}>
-        <Boards id={0} val={this.props.val} date={this.props.date} onClick={this.props.onClick} update={this.props.update}/>
-        <Boards id={1} val={this.props.val} date={this.props.date} onClick={this.props.onClick} update={this.props.update}/>
-        <Boards id={2} val={this.props.val} date={this.props.date} onClick={this.props.onClick} update={this.props.update}/>
+        <Boards id={0} onDrop={this._onDrop} val={this.props.val} date={this.props.date} onClick={this.props.onClick} edit={this.props.edit}/>
+        <Boards id={1} onDrop={this._onDrop} val={this.props.val} date={this.props.date} onClick={this.props.onClick} edit={this.props.edit}/>
+        <Boards id={2} onDrop={this._onDrop} val={this.props.val} date={this.props.date} onClick={this.props.onClick} edit={this.props.edit}/>
       </div>
     );
+  }
+
+  _onDrop(iid, pid) {
+    this.props.update(iid, pid);
   }
 }

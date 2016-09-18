@@ -7,6 +7,7 @@ import { setCD } from '../utils/GeneralUtils'
    */
 const cardSource = {
   beginDrag(props) {
+    props.update(props.idx);
     return {
       id: props.id,
       done: props.done
