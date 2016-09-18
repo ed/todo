@@ -9,7 +9,6 @@ import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import GoCalendar from 'react-icons/lib/go/calendar';
 import GoPlus from 'react-icons/lib/go/plus';
 import Cards from './Cards';
-import Card from './Card';
 import TodoInput from './TodoInput';
 import { tttf, outOfWeek, agenda } from '../utils/TimeUtils'
 import { setCD, createEdits } from '../utils/GeneralUtils'
@@ -32,7 +31,7 @@ export default class Todo extends React.Component {
       name: '',
       input: '',
       id: '',
-      dueDate: '',
+      date: '',
       time: '',
       filter: '',
       filterval: '',
@@ -51,6 +50,7 @@ export default class Todo extends React.Component {
     this.currentWeek = agenda();
     this.onClick = this.onClick.bind(this);
     this.editOff = this.editOff.bind(this);
+    this.kanbanToggle= this.kanbanToggle.bind(this);
     this.toggle = this.toggle.bind(this);
     this.newTodo = this.newTodo.bind(this);
     this.toggleDone = this.toggleDone.bind(this);
@@ -122,11 +122,12 @@ export default class Todo extends React.Component {
       else if (e.target.value && e.target.id) {
         const temp = {
           [e.target.id]: e.target.value.trim(),
-          dueDate: this.state.dueDate,
+          date: this.state.date,
           time: this.state.time,
         };
         this.setState({ [e.target.id]: e.target.value });
         if ([e.target.id] == 'input') {
+          console.log(temp)
           this.props.actions.addTask(temp, 'todo');
           this.setState({ inputting: false, input: '' });
         } else {
@@ -155,7 +156,7 @@ export default class Todo extends React.Component {
     this.setState({
       id: temp.id,
       name: temp.name,
-      dueDate: temp.dueDate,
+      date: temp.date,
       time: temp.time,
       tags: temp.tags,
       prio: temp.prio,
@@ -170,7 +171,7 @@ export default class Todo extends React.Component {
     this.setState({
       id: temp.id,
       name: temp.name,
-      dueDate: temp.dueDate,
+      date: temp.date,
       time: temp.time,
       tags: temp.tags,
       prio: temp.prio,
@@ -179,13 +180,12 @@ export default class Todo extends React.Component {
       num: this.state.num+1,
       editView: true,
     });
-    document.getElementById(temp.idx).focus();
   }
 
   editOff() {
     this.setState({
       name: '',
-      dueDate: '',
+      date: '',
       time: '',
       input: '',
       id: '',
@@ -201,6 +201,10 @@ export default class Todo extends React.Component {
 
   toggle(e) {
     this.setState({[e.target.id] : !this.state[e.target.id]})
+  }
+
+  kanbanToggle() {
+    this.setState({viewDate: !this.state.viewDate, date: ''})
   }
 
   edits() {
@@ -223,13 +227,14 @@ export default class Todo extends React.Component {
     const week = this.currentWeek.map((day, idx) =>
       <ul  id={`${day}`} key={`day${idx}`} 
         style={{ 
-          color: day == this.state.dueDate ? colors.color.blue: colors.color.darkgrey, 
+          color: day == this.state.date ? colors.color.blue: colors.color.darkgrey, 
             padding: 0, 
             margin: 0
         }}>
-        <li id={`${day}`}> 
+        <li id={`${day}`} onClick={(e) => this.handleAgenda(e)}> 
           {`${day} `} 
           <span className='todo-count'>
+            {this.props.tasks.filter(task => task.date === day).size}
           </span>
         </li>
       </ul>)
@@ -248,26 +253,13 @@ export default class Todo extends React.Component {
       prio: '',
       time: '',
       filter: '',
-      users: '',
-      sub: '',
     });
   }
 
-  cards(state) {
-    const { tasks } = this.props
-    return this.props.tasks.filter(task => task.get('done') == state).entrySeq().map(([key, val]) => 
-      <Card
-        idx={val.get('idx')}
-        id={val.get('id')}
-        done={state}
-        text={`${val.get('dueDate')} ${val.get('time')} ${val.get('name')}`}
-      />
-    ) 
-  }
 
   handleAgenda(e) {
     const day = e.target.id;
-    this.setState({dueDate: day, viewDate: true, filter: ''});
+    this.setState({date: day, viewDate: true, filter: ''});
   }
 
   handleDelete(e) {
@@ -277,10 +269,10 @@ export default class Todo extends React.Component {
   }
 
   updateTime(d, t) {
-    this.setState({dueDate: d, time: t})
+    this.setState({date: d, time: t})
     const time = {
       time: t,
-      dueDate: d
+      date: d
     }
     this.props.actions.editTodo(this.state.idx, time);
     this.setState({ time: '', dateSetter: false });
@@ -293,7 +285,12 @@ export default class Todo extends React.Component {
 
   filter(e) {
     e.preventDefault();
-    this.setState({filterval: e.target.value, filter: e.target.id})
+    let a = e.target.value
+    let b = e.target.id
+    if(e.target.value === 'none') {
+      a = ''
+    }
+    this.setState({filterval: a, filter: b})
   }
 
   toggleDone() {
@@ -310,13 +307,15 @@ export default class Todo extends React.Component {
         break;
     }
     this.setState({done: d})
-    this.props.actions.setDone(this.state.idx, d);
+    const o = { done: d }
+    this.props.actions.editTodo(this.state.idx, o);
   }
 
   setDone(id, d) {
     if(this.state.id === id) {
       this.setState({done: d})
-      this.props.actions.setDone(this.state.idx, d);
+      const o = { done: d }
+      this.props.actions.editTodo(this.state.idx, o);
     }
   }
 
@@ -368,8 +367,7 @@ export default class Todo extends React.Component {
                             {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
                           </div>
                         </ReactCSSTransitionGroup>
-                        <textarea style={{fontSize: 14, color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.dueDate} ${this.state.time}`}/>
-
+                        <textarea style={{fontSize: 14, color: colors.color.blue, textAlign: 'center'}} readOnly value={`${this.state.date} ${this.state.time}`}/>
                         <TodoInput
                           maxLength={30}
                           key={this.state.id}
@@ -401,13 +399,15 @@ export default class Todo extends React.Component {
                           display: 'flex', justifyContent: 'center'}}>
                           <select id='tags' onChange={this.filter} value='a'>
                             <option value="a" disabled> filter by tag </option>
+                            <option value = 'none'>none</option>
                             {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
                           </select>
                           <select id='prio' onChange={this.filter} value='a'>
                             <option disabled value='a'> filter by priority</option>
-                            <option value = 'low'>low</option>)
-                            <option value = 'med'>med</option>)
-                            <option value = 'high'>high</option>)
+                            <option value = 'none'>none</option>
+                            <option value = 'low'>low</option>
+                            <option value = 'med'>med</option>
+                            <option value = 'high'>high</option>
                           </select>
                           <button onClick={this.clearFilter} value="clear filters">
                             clear filters
@@ -418,18 +418,19 @@ export default class Todo extends React.Component {
                             display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
                             {week}
                             <h5 style={{margin: 0, padding: 0, 
-                              color: this.state.dueDate == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> not in week 
+                              color: this.state.date == '' ? colors.color.blue : colors.color.green, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> not in week 
                               <span className="todo-count">
+                                {this.props.tasks.filter(task => task.date === '').size}
                               </span>
                             </h5>
                           </div>
-                        <Cards onClick={this.onClick} update={this.setDone}/>
+                          <Cards val={{val: this.state.filterval, filter: this.state.filter}} date={this.state.date} onClick={this.onClick} update={this.setDone}/>
+                        </div>
+        </ReactCSSTransitionGroup>
+      </div>
+    </div>
   </div>
-</ReactCSSTransitionGroup>
-                    </div>
-                  </div>
-                </div>
-              </div>
+</div>
     );
   }
 }

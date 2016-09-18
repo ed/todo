@@ -1,12 +1,12 @@
 import { connect } from 'react-redux'
 import Board from '../components/Board'
-import makeGetVisibleTodos from '../selectors/TodoSelector'
+import allTogetherNow from '../selectors/TodoSelector'
 
 const makeMapStateToProps = () => {
-  const getVisibleTodos = makeGetVisibleTodos()
+  const ATN = allTogetherNow()
   const mapStateToProps = (state, props) => {
     return {
-      cards: getVisibleTodos(state, props)
+      cards: ATN(state, props)
     }
   }
   return mapStateToProps

@@ -1,31 +1,46 @@
 import { createSelector } from 'reselect'
+import { tttf } from '../utils/TimeUtils'
 
-const getVisibilityFilter = (state, props) =>
-  props.id
 
-const getName = (state, props) =>
-  state
+const date = (state, props) => props.date;
+const status = (state, props) => props.id;
+const val = (state, props) => props.val.val;
+const fil = (state, props) => props.val.filter;
 
-const makeGetVisibleTodos = () => {
+
+const filter = createSelector(
+  state => state,
+  val,
+  fil,
+  (s,v,f) => s.filter(todo => f ? todo[f] === v : todo)
+)
+
+const dateFilter = createSelector(
+  filter,
+  date,
+  (todos, day) => todos.filter(todo => todo.date === day)
+)
+
+const timeSort = createSelector(
+  dateFilter,
+  (date) => date.sort((a,b) => tttf(a.time).localeCompare(tttf(b.time)))
+);
+
+const allTogetherNow = () => { 
   return createSelector(
-    [ getVisibilityFilter, getName],
-    (visibilityFilter, todos) => {
-      console.log(todos)
-      switch (visibilityFilter) {
+    timeSort,
+    status,
+    (sorted, done) => {
+      switch (done) {
         case 0:
-          todos.filter(todo => console.log(todo.done))
-          return todos.filter(todo => todo.done === 0)
+          return sorted.filter(todo => todo.done === 0)
         case 1:
-          todos.filter(todo => console.log(todo.done))
-          return todos.filter(todo => todo.done === 1)
+          return sorted.filter(todo => todo.done === 1)
         case 2:
-          todos.filter(todo => console.log(todo.done))
-          return todos.filter(todo => todo.done === 2)
+          return sorted.filter(todo => todo.done === 2)
         default:
-          return todos
+          return sorted
       }
-    }
-  )
-}
+    })};
 
-export default makeGetVisibleTodos
+export default allTogetherNow

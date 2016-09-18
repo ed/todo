@@ -1,6 +1,5 @@
 import * as types from '../constants/ActionTypes'
-let uuid = require('node-uuid');
-let moment = require('moment');
+let uuid = require('node-uuid'); let moment = require('moment');
 
 let idx = 0;
 export const addTask = (obj, task) => {
@@ -28,14 +27,6 @@ export const editTodo = (current, obj) => {
     type: types.EDIT_TODO,
     id: current,
     obj
-  }
-}
-
-export const setDone = (id, done) => {
-  return {
-    type: types.SET_DONE,
-    id: id,
-    done: done
   }
 }
 

@@ -23,7 +23,7 @@ export default class Board extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired,
-    contents: PropTypes.object.isRequired,
+    cards: PropTypes.object.isRequired,
   };
 
   render() {
@@ -34,7 +34,7 @@ export default class Board extends Component {
         <ul>
           {cards.map(c => 
             <li key={c.id} id={c.idx} onDrag={(e) => onClick(e)} onClick={(e) => onClick(e)}>
-              <Card id={c.id} text={c.name} idx={c.idx} done={c.done} />
+              <Card id={c.id} text={`${c.time} ${c.name}`} idx={c.idx} done={c.done} />
           </li>
         )}
       </ul>
