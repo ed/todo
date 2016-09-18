@@ -7,7 +7,7 @@ export const addTask = (obj, task) => {
     id: uuid.v4(),
     timestamp: moment(Date.now()).format("h:mm a"),
     task: task,
-    prio: '',
+    prio: 'low',
     tags: '',
     obj,
   }

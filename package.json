@@ -42,16 +42,17 @@
     "webpack-dev-server": "^1.15.0"
   },
   "dependencies": {
-    "react-dom": "^15.3.1",
-    "react-icons": "^2.2.1",
     "immutable": "^3.8.1",
     "moment": "^2.14.1",
     "node-uuid": "^1.4.7",
     "react": "^15.3.1",
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
+    "react-dom": "^15.3.1",
+    "react-icons": "^2.2.1",
     "react-redux": "^4.4.5",
     "react-router": "^2.7.0",
+    "reselect": "^2.5.4",
     "socket.io": "^1.4.8",
     "whatwg-fetch": "^1.0.0"
   }

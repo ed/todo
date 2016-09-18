@@ -5,8 +5,23 @@ module.exports = {
     return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   },
 
+  prio(prio) {
+    let color = colors.color.basegreen
+    switch(prio) {
+      case 'low':
+        break;
+      case 'med':
+        color = colors.color.baseblue
+        break;
+      case 'high':
+        color = colors.color.basered
+        break;
+    }
+    return color
+  },
+
   setCD(ds, c) {
-    let color = c || colors.color.darkgrey;
+    let color = c || colors.color.basegrey;
     let decor = 'none';
     switch(ds) {
       case 0:
@@ -15,7 +30,7 @@ module.exports = {
         color = colors.color.orange;
         break;
       case 2:
-        color = colors.color.red;
+        color = colors.color.basered;
         decor = 'line-through';
         break;
     }

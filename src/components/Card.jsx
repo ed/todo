@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import { DragSource } from 'react-dnd';
 import { CARD } from '../constants/ItemTypes';
 import { setCD } from '../utils/GeneralUtils'
+import { prio } from '../utils/GeneralUtils'
+import GoHeart from 'react-icons/lib/go/heart';
   /**
    * Implements the drag source contract.
    */
@@ -37,7 +39,7 @@ export default class Card extends React.Component {
     const { c, d } = setCD(done);
     return connectDragSource(
       <div id={id} style={{ textDecoration: d, color: c, opacity: isDragging ? 0.5 : 1 }}>
-          {text}
+        <GoHeart size={22} color={prio(this.props.prio)} /> {text}
       </div>
     );
   }

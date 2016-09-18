@@ -24,9 +24,9 @@ textarea {
 	text-overflow: ellipsis;
 	font-family: 'Roboto', sans-serif;
 	font-size: 18px;
-	color: #F9F9F9;
 	transition-duration: 1s;
 	height: 25px;
+	color: #565656;
 }
 
 textarea:focus {

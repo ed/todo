@@ -7,6 +7,7 @@ import IoClose from 'react-icons/lib/io/close-circled';
 import IoAlert from 'react-icons/lib/io/alert';
 import IoCheckmark from 'react-icons/lib/io/checkmark-circled';
 import GoCalendar from 'react-icons/lib/go/calendar';
+import GoTag from 'react-icons/lib/go/tag';
 import GoPlus from 'react-icons/lib/go/plus';
 import Cards from './Cards';
 import TodoInput from './TodoInput';
@@ -27,6 +28,7 @@ export default class Todo extends React.Component {
     super(props);
     this.state = {
       editView: false,
+      editTag: false,
       inputting: false,
       name: '',
       input: '',
@@ -75,6 +77,10 @@ export default class Todo extends React.Component {
 
   onChange(e) {
     e.preventDefault();
+    if([e.target.id] == 'tags') {
+      if (e.which === 32)
+        return false;
+    }
     this.setState({ [e.target.id]: e.target.value });
   }
 
@@ -331,6 +337,7 @@ export default class Todo extends React.Component {
                       <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
                       <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
                       <IoAlert size={22} onClick={this.prioSelect} color={colors.color.orange}/>
+                      <GoTag id="editTag" onClick={this.toggle}  size={22} color={colors.color.pink}/>
                       <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
                       <ReactCSSTransitionGroup
                         transitionName="calendar-trans"
@@ -342,21 +349,19 @@ export default class Todo extends React.Component {
                         </div>
                       </ReactCSSTransitionGroup>
                       <div style={{flexDirection: 'column', display: 'flex'}}>
-                        <textarea style={{fontSize: 14, color: colors.color.baseblue, textAlign: 'center'}} readOnly value={`${this.state.date} ${this.state.time}`}/>
-                      <TodoInput
-                        maxLength={30}
-                        key={this.state.id}
-                        k={this.state.id}
-                        type={"todo"}
-                        done={this.state.done}
-                        id={this.state.id}
-                        update={this.handleNameUpdate.bind(this)} 
-                        name={this.state.name}
-                        actions={this.props.actions}
-                      />
-                      {edits}
-                    </div>
-                      {this.state.prio}
+                        <TodoInput
+                          maxLength={30}
+                          key={this.state.id}
+                          k={this.state.id}
+                          type={"todo"}
+                          done={this.state.done}
+                          id={this.state.id}
+                          update={this.handleNameUpdate.bind(this)} 
+                          name={this.state.name}
+                          actions={this.props.actions}
+                        />
+                        {this.state.editTag ? edits : null}
+                      </div>
                     </div>
                       : null}
                     </ReactCSSTransitionGroup>
@@ -368,41 +373,40 @@ export default class Todo extends React.Component {
                   >
                     <div className='filters' style={{
                       display: 'flex', justifyContent: 'center',
-                      background: '#FFBA77'
+                        background: '#FFBA77'
                     }}>
-                      <select id='tags' onChange={this.filter} value='a'>
-                        <option value="a" disabled> filter by tag </option>
-                        <option value = 'none'>none</option>
-                        {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
-                      </select>
-                      <select id='prio' onChange={this.filter} value='a'>
-                        <option disabled value='a'> filter by priority</option>
-                        <option value = 'none'>none</option>
-                        <option value = 'low'>low</option>
-                        <option value = 'med'>med</option>
-                        <option value = 'high'>high</option>
-                      </select>
-                      <button onClick={this.clearFilter} value="clear filters">
-                        clear filters
-                      </button>
+                    <select id='tags' onChange={this.filter} value='a'>
+                      <option value="a" disabled> filter by tag </option>
+                      <option value = 'none'>none</option>
+                      {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
+                    </select>
+                    <select id='prio' onChange={this.filter} value='a'>
+                      <option disabled value='a'> filter by priority</option>
+                      <option value = 'low'>low</option>
+                      <option value = 'med'>med</option>
+                      <option value = 'high'>high</option>
+                    </select>
+                    <button onClick={this.clearFilter} value="clear filters">
+                      clear filters
+                    </button>
+                  </div>
+                  <div className='card-container'>
+                    <div className='week-container' style={{
+                      display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
+                      {week}
+                      <h5 style={{margin: 0, padding: 0, 
+                        color: this.state.date == '' ? colors.color.baseblue : colors.color.basegreen, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
+                        <span className="todo-count" style={{margin: '5px'}}>
+                          {this.props.tasks.size}
+                        </span>
+                      </h5>
                     </div>
-                    <div className='card-container'>
-                      <div className='week-container' style={{
-                        display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
-                        {week}
-                        <h5 style={{margin: 0, padding: 0, 
-                          color: this.state.date == '' ? colors.color.baseblue : colors.color.basegreen, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
-                          <span className="todo-count" style={{margin: '5px'}}>
-                            {this.props.tasks.size}
-                          </span>
-                        </h5>
-                      </div>
-                      <Cards val={{val: this.state.filterval, filter: this.state.filter}} edit={this.handleDrag} date={this.state.date} onClick={this.onClick} update={this.setDone}/>
-                    </div>
-                  </ReactCSSTransitionGroup>
-              <div>
-                    {this.state.inputting ? 
-              <div style={{display:'flex', justifyContent:'center'}} >
+                    <Cards val={{val: this.state.filterval, filter: this.state.filter}} edit={this.handleDrag} date={this.state.date} onClick={this.onClick} update={this.setDone}/>
+                  </div>
+                </ReactCSSTransitionGroup>
+                <div>
+                  {this.state.inputting ? 
+                    <div style={{display:'flex', justifyContent:'center'}} >
                       <textarea
                         autoFocus
                         className="todo-name-setter"
@@ -414,13 +418,13 @@ export default class Todo extends React.Component {
                         placeholder="add todo"
                         style={{color: colors.color.basegrey, textAlign: "center"}}
                       />
-                        </div>
-                        : <GoPlus size={30} color={colors.color.baseblue} onClick={this.newTodo}/>}
-                      </div>
+                    </div>
+                      : <GoPlus size={30} color={colors.color.baseblue} onClick={this.newTodo}/>}
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
     );
   }
 }
