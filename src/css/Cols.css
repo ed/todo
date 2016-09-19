@@ -24,8 +24,9 @@
   flex: none !important;
 }
 
-.u-10p {
-  width: 10% !important;
+.u-15p {
+  width: 15% !important;
+  flex: none !important;
 }
 
 .u-3of4 {

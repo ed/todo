@@ -363,16 +363,10 @@ export default class Todo extends React.Component {
     const listWeek = this.listWeek();
     return (
       <div className="Grid Grid--flexCells" >
-              <ReactCSSTransitionGroup
-                transitionName="edit-trans"
-                transitionEnterTimeout={500}
-                transitionLeaveTimeout={300}
-              >
                 {this.state.editView ?
-
+          <div className="Grid-cell Grid-cell u-15p" style={{fontSize: 12, flexDirection: 'row' }}>
               <div className="Aligner" style={{width: "100%", height: '100%'}}>
-                <div className="Aligner-item Aligner-item--fixed" style={{background: colors.color.basewhite, borderRadius: '20px', padding: '10px', display: 'flex'}} >
-          <div id="editMenu" className="Grid-cell Grid-cell u-10p" style={{fontSize: 16, flexDirection: 'row' }}>
+                <div className="Aligner-item Aligner-item--fixed" style={{ width: '90%', background: colors.color.basewhite, borderRadius: '20px', padding: '10px', display: 'flex'}} >
             <div id="editButtons" className='edits' style={{display:'flex', justifyContent:'flex-start'}} >
 
               <div style={{background: colors.color.basewhite, textAlign: 'center'}}>
@@ -415,8 +409,7 @@ export default class Todo extends React.Component {
           </div>
           </div>
             : null}
-              </ReactCSSTransitionGroup>
-            <div className="Grid-cell" style={{color: colors.color.basegrey, fontSize: 16, flexDirection: 'column' }}>
+            <div className="Grid-cell" style={{color: colors.color.basegrey, fontSize: 12, flexDirection: 'column' }}>
               <div className="Aligner" style={{width: "100%", height: '100%'}}>
                 <div className="Aligner-item Aligner-item--fixed" style={{background: colors.color.basewhite, borderRadius: '20px', padding: '10px'}} >
                     <div className='filters' style={{
@@ -442,20 +435,15 @@ export default class Todo extends React.Component {
                     <div className='week-container' style={{
                       cursor: 'pointer', display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
                       <h5 id='listWeek' style={{margin: 0, padding: 0, 
-                        color: this.state.listWeek ? colors.color.peach: colors.color.baselime, fontSize: 16}} onClick={(e) => this.toggle(e)}> current week </h5>
+                        color: this.state.listWeek ? colors.color.peach: colors.color.baselime, fontSize: 12}} onClick={(e) => this.toggle(e)}> current week </h5>
                       {week}
                       <h5 style={{margin: 0, padding: 0, 
-                        color: this.state.date == '' ? colors.color.baseblue : colors.color.basegreen, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
+                        color: this.state.date == '' ? colors.color.baseblue : colors.color.basegreen, fontSize: 12}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
                         <span className="todo-count" style={{margin: '5px'}}>
                           {this.props.tasks.size}
                         </span>
                       </h5>
                     </div>
-                  <ReactCSSTransitionGroup
-                    transitionName="todo-trans"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={500}
-                  >
                     {!this.state.listWeek ?
                     <Cards 
                       val={{val: this.state.filterval, filter: this.state.filter}} 
@@ -468,14 +456,14 @@ export default class Todo extends React.Component {
                       update={this.setDone}
                       chosen={this.state.id}
                     /> : 
-
+<div style={{width: '100%'}}>
                     <Infinite containerHeight={550} elementHeight={30} >
-                        <div id='listWeek' className='listWeek' style={{display: 'flex', flexDirection: 'column', width: '500px', height: '500px', alignItems:'center', justifyContent: 'space-around'}}>     
+                        <div id='listWeek' className='listWeek' style={{display: 'flex', flexDirection: 'column', height: '550px', alignItems:'center', justifyContent: 'space-around'}}>     
                           { listWeek }
                         </div>
                       </Infinite>
+</div>
                     }
-                </ReactCSSTransitionGroup>
                   </div>
                 <div>
                   {this.state.inputting ? 

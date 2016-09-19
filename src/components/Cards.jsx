@@ -14,7 +14,7 @@ export default class Cards extends Component {
   render() {
     const {...props} = this.props;
     return (
-      <div style={{display: 'flex'}}>
+      <div style={{display: 'flex', flex: '1 1 0'}}>
         <Boards id={0} onDrop={this._onDrop} {...props} />
         <Boards id={1} onDrop={this._onDrop} {...props} />
         <Boards id={2} onDrop={this._onDrop} {...props} />

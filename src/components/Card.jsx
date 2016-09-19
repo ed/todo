@@ -40,7 +40,6 @@ export default class Card extends React.Component {
     const { isDragging, connectDragSource, ...props} = this.props;
     const { c, d } = setCD(props.done);
     const b = props.chosen === props.id ? colors.color.lightgrey : colors.color.basewhite
-    console.log(props.ro,props.chosen,b)
     return connectDragSource(
       <div id='card-line' className='InputAddOn' style={{ cursor: '-webkit-grab', display: 'flex', background: b, textDecoration: d, color: c, opacity: isDragging ? 0.5 : 1 , height: 30}}>
         <span className="InputAddOn-item">
