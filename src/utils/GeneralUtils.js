@@ -5,13 +5,17 @@ module.exports = {
     return i.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   },
 
+  generateTagList(a) {
+    return a.reduce((p,n) => { if (n.tags !== "") { p.push(n.tags); } return p }, [])
+  },
+
   prio(prio) {
-    let color = colors.color.basegreen
+    let color = colors.color.baseblue
     switch(prio) {
       case 'low':
         break;
       case 'med':
-        color = colors.color.baseblue
+        color = colors.color.orange
         break;
       case 'high':
         color = colors.color.basered

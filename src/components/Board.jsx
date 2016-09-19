@@ -5,6 +5,9 @@ import Card from '../components/Card'
 import { outOfWeek, isInWeek, tttf } from '../utils/TimeUtils'
 
 
+const Infinite = require('react-infinite');
+
+
 const cardTarget = {
   drop(props, monitor) {
     props.onDrop(monitor.getItem().id, props.id)
@@ -30,13 +33,15 @@ export default class Board extends Component {
     const isActive = canDrop && isOver;
     return connectDropTarget(
       <div className="card">
-        <ul>
-          {cards.map(c => 
-            <li key={c.id} id={c.id} onClick={(e) => onClick(e)}>
-              <Card id={c.id} text= {isInWeek(c.date) ? `${c.time} ${c.name}` : `${c.name}${c.tags ? '::'+c.tags.toUpperCase() : ''} ${outOfWeek(c.date)} ${c.time}`} prio={c.prio} update={edit} done={c.done} />
-          </li>
-        )}
-      </ul>
+        <Infinite containerHeight={350} elementHeight={40} >
+          <ul>
+            {cards.map(c => 
+              <li key={c.id} id={c.id} onClick={(e) => onClick(e)}>
+                <Card id={c.id} text= {isInWeek(c.date) ? `${c.time} ${c.name}` : `${c.name}${c.tags ? `(${c.tags.toUpperCase()})` : ''} ${outOfWeek(c.date)} ${c.time}`} prio={c.prio} update={edit} done={c.done} />
+              </li>
+            )}
+          </ul>
+        </Infinite>
       </div>
     );
   }

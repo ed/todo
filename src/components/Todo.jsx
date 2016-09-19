@@ -12,7 +12,7 @@ import GoPlus from 'react-icons/lib/go/plus';
 import Cards from './Cards';
 import TodoInput from './TodoInput';
 import { tttf, outOfWeek, agenda } from '../utils/TimeUtils'
-import { setCD, createEdits } from '../utils/GeneralUtils'
+import { setCD, createEdits, generateTagList } from '../utils/GeneralUtils'
 
 const Immutable = require('immutable');
 const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
@@ -40,7 +40,7 @@ export default class Todo extends React.Component {
       dateSetter: false,
       viewDate: true,
       tags: '',
-      tagArray: [],
+      tagList: [],
       prio: '',
       users: '',
       sub: '',
@@ -69,6 +69,7 @@ export default class Todo extends React.Component {
 
   componentDidMount() {
     window.addEventListener("keydown", this.onKeyDown);
+    this.setState({tagList: generateTagList(this.props.tasks)})
   }
 
   componentWillUnmount() {
@@ -133,9 +134,9 @@ export default class Todo extends React.Component {
         } else {
           this.props.actions.editTodo(this.state.id, temp);
           if ([e.target.id] == 'tags') {
-            const a = this.state.tagArray;
+            const a = this.state.tagList;
             a.push(e.target.value.trim());
-            this.setState({tagArray: a});
+            this.setState({tagList: a});
           }
         }
         if (this.state.editView == true && [e.target.id] != 'input') {
@@ -378,7 +379,7 @@ export default class Todo extends React.Component {
                     <select id='tags' onChange={this.filter} value='a'>
                       <option value="a" disabled> filter by tag </option>
                       <option value = 'none'>none</option>
-                      {this.state.tagArray.map(t => <option key={t} value = {t}>{t}</option>)}
+                      {this.state.tagList.map(t => <option key={t} value = {t}>{t}</option>)}
                     </select>
                     <select id='prio' onChange={this.filter} value='a'>
                       <option disabled value='a'> filter by priority</option>
