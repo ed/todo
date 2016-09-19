@@ -36,8 +36,8 @@ export default class Board extends Component {
         <Infinite containerHeight={350} elementHeight={40} >
           <ul>
             {cards.map(c => 
-              <li key={c.id} id={c.id} onClick={(e) => onClick(e)}>
-                <Card id={c.id} text= {isInWeek(c.date) ? `${c.time} ${c.name}` : `${c.name}${c.tags ? `(${c.tags.toUpperCase()})` : ''} ${outOfWeek(c.date)} ${c.time}`} prio={c.prio} update={edit} done={c.done} />
+              <li key={c.id} id={c.id} onClick={(e) => onClick(e)} style={{cursor: '-webkit-grab'}}>
+                <Card id={c.id} text= {isInWeek(c.date) ? `${c.time} ${c.name}` : `${c.name}${c.tags ? `#${c.tags.toUpperCase()}` : ''} ${outOfWeek(c.date)} ${c.time}`} prio={c.prio} update={edit} done={c.done} />
               </li>
             )}
           </ul>

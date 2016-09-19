@@ -393,7 +393,7 @@ export default class Todo extends React.Component {
                   </div>
                   <div className='card-container'>
                     <div className='week-container' style={{
-                      display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
+                      cursor: 'pointer', display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
                       {week}
                       <h5 style={{margin: 0, padding: 0, 
                         color: this.state.date == '' ? colors.color.baseblue : colors.color.basegreen, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 

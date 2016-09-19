@@ -125,10 +125,10 @@ textarea:focus {
 }
 
 .todo-count {
-	color: white;
+	background: #565656;
+	color: #f9f9f9;
 	padding: 2px 5px;
 	border-radius: 20px;
-	background: #f9f9f9;
 	font-size: 12px;
 }
 

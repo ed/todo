@@ -38,9 +38,10 @@ export default class Card extends React.Component {
     const { isDragging, connectDragSource, done, text, id } = this.props;
     const { c, d } = setCD(done);
     return connectDragSource(
-      <div id={id} style={{ textDecoration: d, color: c, opacity: isDragging ? 0.5 : 1 }}>
+      <div id={id} style={{ cursor: 'grab', textDecoration: d, color: c, opacity: isDragging ? 0.5 : 1 }}>
         <GoHeart size={22} color={prio(this.props.prio)} /> {text}
-      </div>
+      </div>,
+     { dropEffect: 'move' }
     );
   }
 }
