@@ -12,11 +12,12 @@ export default class Cards extends Component {
   }
 
   render() {
+    const {...props} = this.props;
     return (
       <div style={{display: 'flex'}}>
-        <Boards id={0} onDrop={this._onDrop} val={this.props.val} date={this.props.date} onClick={this.props.onClick} edit={this.props.edit}/>
-        <Boards id={1} onDrop={this._onDrop} val={this.props.val} date={this.props.date} onClick={this.props.onClick} edit={this.props.edit}/>
-        <Boards id={2} onDrop={this._onDrop} val={this.props.val} date={this.props.date} onClick={this.props.onClick} edit={this.props.edit}/>
+        <Boards id={0} onDrop={this._onDrop} {...props} />
+        <Boards id={1} onDrop={this._onDrop} {...props} />
+        <Boards id={2} onDrop={this._onDrop} {...props} />
       </div>
     );
   }

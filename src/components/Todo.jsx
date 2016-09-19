@@ -1,6 +1,7 @@
 import React from 'react';
 import colors from '../constants/colors'
 import Calendar from './Calendar';
+import { findDOMnode } from 'react-dom'
 import IoCalendar from 'react-icons/lib/io/calendar';
 import IoTrash from 'react-icons/lib/io/trash-a';
 import IoClose from 'react-icons/lib/io/close-circled';
@@ -11,11 +12,12 @@ import GoTag from 'react-icons/lib/go/tag';
 import GoPlus from 'react-icons/lib/go/plus';
 import Cards from './Cards';
 import TodoInput from './TodoInput';
-import { tttf, outOfWeek, agenda } from '../utils/TimeUtils'
+import { tttf, outOfWeek, agenda, getDayName } from '../utils/TimeUtils'
 import { setCD, createEdits, generateTagList } from '../utils/GeneralUtils'
 
 const Immutable = require('immutable');
 const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+const Infinite = require('react-infinite');
 
 export default class Todo extends React.Component {
 
@@ -33,12 +35,14 @@ export default class Todo extends React.Component {
       name: '',
       input: '',
       id: '',
+      ro: true,
       date: '',
       time: '',
       filter: '',
       filterval: '',
       dateSetter: false,
       viewDate: true,
+      listWeek: false,
       tags: '',
       tagList: [],
       prio: '',
@@ -69,11 +73,13 @@ export default class Todo extends React.Component {
 
   componentDidMount() {
     window.addEventListener("keydown", this.onKeyDown);
+    window.addEventListener("click", this.onClick, false);
     this.setState({tagList: generateTagList(this.props.tasks)})
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.onKeyDown);
+    window.removeEventListener("click", this.onClick, false);
   }
 
   onChange(e) {
@@ -93,9 +99,6 @@ export default class Todo extends React.Component {
   prioSelect() {
     let p = '';
     switch(this.state.prio) {
-      case '':
-        p = 'low';
-        break;
       case 'low':
         p = 'med';
         break;
@@ -103,7 +106,7 @@ export default class Todo extends React.Component {
         p = 'high';
         break;
       case 'high':
-        p = '';
+        p = 'low';
         break;
     }
     const temp = {
@@ -129,8 +132,7 @@ export default class Todo extends React.Component {
         this.setState({ [e.target.id]: e.target.value });
         if ([e.target.id] == 'input') {
           this.props.actions.addTask(temp, 'todo');
-          this.setState({ inputting: false, input: '', editView: true });
-          this.editID(this.props.tasks.keyOf(this.props.tasks.last()))
+          this.setState({ inputting: false, input: ''});
         } else {
           this.props.actions.editTodo(this.state.id, temp);
           if ([e.target.id] == 'tags') {
@@ -153,16 +155,35 @@ export default class Todo extends React.Component {
 
   onClick(e) {
     e.preventDefault();
-    const temp = this.props.tasks.get(e.target.id);
-    this.setState({
-      id: temp.id,
-      name: temp.name,
-      time: temp.time,
-      tags: temp.tags,
-      prio: temp.prio,
-      done: temp.done,
-      editView: true,
-    });
+    if (e.target.parentNode.className=="EditButton" || e.target.parentNode.tagName=="g") {
+
+    }
+    else if (e.target.id === '') {
+      this.editOff()
+    }
+    else {
+      if (this.state.id == e.target.id) {
+        this.setState({ro: false});
+      }
+      else
+        this.setState({ro: true});
+      try {
+        const temp = this.props.tasks.get(e.target.id);
+        this.setState({
+          id: temp.id,
+          name: temp.name,
+          time: temp.time,
+          tags: temp.tags,
+          prio: temp.prio,
+          done: temp.done,
+          editView: true,
+          editTag: false,
+          dateSetter: false,
+        });
+      }
+      catch(err) {
+      }
+    }
   }
 
   editID(id) {
@@ -170,7 +191,6 @@ export default class Todo extends React.Component {
     this.setState({
       id: temp.id,
       name: temp.name,
-      date: temp.date,
       time: temp.time,
       tags: temp.tags,
       prio: temp.prio,
@@ -193,6 +213,7 @@ export default class Todo extends React.Component {
       prio: '',
       users: '',
       sub: '',
+      editView: false,
     });
   }
 
@@ -201,24 +222,42 @@ export default class Todo extends React.Component {
   }
 
   kanbanToggle() {
-    this.setState({viewDate: !this.state.viewDate, date: ''})
+    this.setState({listWeek: false, viewDate: !this.state.viewDate, date: ''})
   }
 
   edits() {
     const edits = this.editList.map((val, key) =>
-      <textarea
-        style={{textAlign: 'center'}}
+      <TodoInput
         className={val.cname}
-        key={key} 
         id={val.val}
-        value={this.state[val.val]}
-        placeholder={val.def}
+        name={this.state[val.val]}
+        placeholder={this.state[val.val] ? this.state[val.val] : val.def}
         maxLength="20"
-        onChange={(e) => this.onChange(e)}
       />);
 
     return edits;
   }
+
+  listWeek() {
+    const week = this.currentWeek.map((day, idx) =>
+      <span>
+        <ul id={`${day}`} style={{ 
+          color: colors.color.peach, 
+            padding: 0, 
+            margin: 0
+        }}>
+        {`${getDayName(day)} ${day}`} 
+        {this.props.tasks.filter(task => task.date === day).entrySeq().map(([key,obj]) => 
+          <li id={obj.id} style={{color: colors.color.basegrey}} onClick={(e) => this.onClick(e)}>
+          {`${obj.time} ${obj.name}`}
+        </li>)}
+      </ul>
+    </span>
+      )
+    return week;
+  }
+
+
 
   week() {
     const week = this.currentWeek.map((day, idx) =>
@@ -255,7 +294,7 @@ export default class Todo extends React.Component {
 
   handleAgenda(e) {
     const day = e.target.id;
-    this.setState({date: day, viewDate: true, filter: ''});
+    this.setState({listWeek: false, date: day, viewDate: true, filter: ''});
   }
 
   handleDelete(e) {
@@ -321,79 +360,89 @@ export default class Todo extends React.Component {
   render() {
     const edits = this.edits();
     const week = this.week();
+    const listWeek = this.listWeek();
     return (
       <div className="Grid Grid--flexCells" >
-        <div className="Grid-cell" style={{color: colors.color.basegrey, fontSize: 16, flexDirection: 'column' }}>
-          <div className="Aligner" style={{width: "100%", height: '100%'}}>
-            <div className="Aligner-item Aligner-item--fixed" style={{background: colors.color.basewhite, borderRadius: '20px', padding: '10px'}} >
-              <div className='edits' style={{display:'flex', justifyContent:'center'}} >
-                <ReactCSSTransitionGroup
-                  transitionName="edit-trans"
-                  transitionEnterTimeout={500}
-                  transitionLeaveTimeout={300}
-                >
-                  {this.state.editView ?
-                    <div style={{background: colors.color.basewhite, textAlign: 'center'}}>
-                      <IoClose size={22} onClick={this.editOff} onKeyPress={this.editOff} color={colors.color.basegrey} />
-                      <IoCheckmark size={22} onClick={this.toggleDone} color={colors.color.green}/>
-                      <IoCalendar size={22} id="dateSetter" onClick={this.toggle} color={colors.color.blue}/>
-                      <IoAlert size={22} onClick={this.prioSelect} color={colors.color.orange}/>
-                      <GoTag id="editTag" onClick={this.toggle}  size={22} color={colors.color.pink}/>
-                      <IoTrash size={22} onClick={this.handleDelete} color={colors.color.red}/>
-                      <ReactCSSTransitionGroup
-                        transitionName="calendar-trans"
-                        transitionEnterTimeout={500}
-                        transitionLeaveTimeout={300}
-                      >
-                        <div className='cal' style={{textAlign: 'center', display: 'flex', justifyContent: 'center'}}>
-                          {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
-                        </div>
-                      </ReactCSSTransitionGroup>
-                      <div style={{flexDirection: 'column', display: 'flex'}}>
-                        <TodoInput
-                          maxLength={30}
-                          key={this.state.id}
-                          k={this.state.id}
-                          type={"todo"}
-                          done={this.state.done}
-                          id={this.state.id}
-                          update={this.handleNameUpdate.bind(this)} 
-                          name={this.state.name}
-                          actions={this.props.actions}
-                        />
-                        {this.state.editTag ? edits : null}
+              <ReactCSSTransitionGroup
+                transitionName="edit-trans"
+                transitionEnterTimeout={500}
+                transitionLeaveTimeout={300}
+              >
+                {this.state.editView ?
+
+              <div className="Aligner" style={{width: "100%", height: '100%'}}>
+                <div className="Aligner-item Aligner-item--fixed" style={{background: colors.color.basewhite, borderRadius: '20px', padding: '10px', display: 'flex'}} >
+          <div id="editMenu" className="Grid-cell Grid-cell u-10p" style={{fontSize: 16, flexDirection: 'row' }}>
+            <div id="editButtons" className='edits' style={{display:'flex', justifyContent:'flex-start'}} >
+
+              <div style={{background: colors.color.basewhite, textAlign: 'center'}}>
+                <span id="buttons">
+                  <p>{this.state.name}</p>
+                    <button className="EditButton" id="close" onClick={this.editOff}>
+                      <IoClose id="close" size={22} color={colors.color.basegrey} />
+                    </button>
+                    <button id="check" className="EditButton" onClick={this.toggleDone}>
+                      <IoCheckmark id="checkmark" onClick={this.toggleDone} size={22} color={colors.color.green}/>
+                    </button>
+                    <button className="EditButton" id="dateSetter" onClick={this.toggle}>
+                      <IoCalendar id="dateSetter" onClick={this.toggle} size={22} color={colors.color.blue}/>
+                    </button>
+                    <button className="EditButton" id="aT" onClick={this.prioSelect}>
+                      <IoAlert id="aT" onClick={this.prioSelect} size={22} color={colors.color.orange}/>
+                    </button>
+                    <button className="EditButton" id="editTag" onClick={this.toggle}>
+                      <GoTag id="editTag" onClick={this.toggle} size={22} color={colors.color.pink}/>
+                    </button>
+                    <button className="EditButton" id='trash' onClick={this.handleDelete}>
+                      <IoTrash size={22} id='trash' onClick={this.handleDelete} color={colors.color.red}/>
+                    </button>
+                  </span>
+                  <div style={{flexDirection: 'column', display: 'flex'}}>
+                    <ReactCSSTransitionGroup
+                      transitionName="calendar-trans"
+                      transitionEnterTimeout={500}
+                      transitionLeaveTimeout={300}
+                    >
+                      <div className='cal' style={{textAlign: 'center', display: 'flex', justifyContent: 'center'}}>
+                        {this.state.dateSetter ? <Calendar handleTimeEdit={this.editTime} update={this.updateTime} /> : null}
                       </div>
-                    </div>
-                      : null}
                     </ReactCSSTransitionGroup>
+                    {this.state.editTag ? edits : null}
                   </div>
-                  <ReactCSSTransitionGroup
-                    transitionName="todo-trans"
-                    transitionEnterTimeout={200}
-                    transitionLeaveTimeout={200}
-                  >
+                </div>
+            </div>
+            </div>
+          </div>
+          </div>
+            : null}
+              </ReactCSSTransitionGroup>
+            <div className="Grid-cell" style={{color: colors.color.basegrey, fontSize: 16, flexDirection: 'column' }}>
+              <div className="Aligner" style={{width: "100%", height: '100%'}}>
+                <div className="Aligner-item Aligner-item--fixed" style={{background: colors.color.basewhite, borderRadius: '20px', padding: '10px'}} >
                     <div className='filters' style={{
                       display: 'flex', justifyContent: 'center',
                         background: '#FFBA77'
                     }}>
-                    <select id='tags' onChange={this.filter} value='a'>
-                      <option value="a" disabled> filter by tag </option>
-                      <option value = 'none'>none</option>
-                      {this.state.tagList.map(t => <option key={t} value = {t}>{t}</option>)}
-                    </select>
-                    <select id='prio' onChange={this.filter} value='a'>
-                      <option disabled value='a'> filter by priority</option>
-                      <option value = 'low'>low</option>
-                      <option value = 'med'>med</option>
-                      <option value = 'high'>high</option>
-                    </select>
-                    <button onClick={this.clearFilter} value="clear filters">
-                      clear filters
-                    </button>
                   </div>
+                  <select id='tags' onChange={this.filter} value='a'>
+                    <option value="a" disabled> filter by tag </option>
+                    <option value = 'none'>none</option>
+                    {this.state.tagList.map(t => <option key={t} value = {t}>{t}</option>)}
+                  </select>
+                  <select id='prio' onChange={this.filter} value='a'>
+                    <option disabled value='a'> filter by priority</option>
+                    <option value = 'low'>low</option>
+                    <option value = 'med'>med</option>
+                    <option value = 'high'>high</option>
+                  </select>
+                  <button onClick={this.clearFilter} value="clear filters">
+                    clear filters
+                  </button>
                   <div className='card-container'>
                     <div className='week-container' style={{
                       cursor: 'pointer', display: 'flex', justifyContent: 'space-around', flexFlow: 'column wrap'}}>
+                      <h5 id='listWeek' style={{margin: 0, padding: 0, 
+                        color: this.state.listWeek ? colors.color.peach: colors.color.baselime, fontSize: 16}} onClick={(e) => this.toggle(e)}> current week </h5>
                       {week}
                       <h5 style={{margin: 0, padding: 0, 
                         color: this.state.date == '' ? colors.color.baseblue : colors.color.basegreen, fontSize: 16}} onClick={(e) => this.kanbanToggle(e)}> all tasks 
@@ -402,25 +451,47 @@ export default class Todo extends React.Component {
                         </span>
                       </h5>
                     </div>
-                    <Cards val={{val: this.state.filterval, filter: this.state.filter}} edit={this.handleDrag} date={this.state.date} onClick={this.onClick} update={this.setDone}/>
-                  </div>
+                  <ReactCSSTransitionGroup
+                    transitionName="todo-trans"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={500}
+                  >
+                    {!this.state.listWeek ?
+                    <Cards 
+                      val={{val: this.state.filterval, filter: this.state.filter}} 
+                      edit={this.handleDrag} 
+                      date={this.state.date} 
+                      updateName={this.handleNameUpdate.bind(this)} 
+                      actions={this.props.actions}
+                      onClick={this.onClick} 
+                      ro={this.state.ro}
+                      update={this.setDone}
+                      chosen={this.state.id}
+                    /> : 
+
+                    <Infinite containerHeight={550} elementHeight={30} >
+                        <div id='listWeek' className='listWeek' style={{display: 'flex', flexDirection: 'column', width: '500px', height: '500px', alignItems:'center', justifyContent: 'space-around'}}>     
+                          { listWeek }
+                        </div>
+                      </Infinite>
+                    }
                 </ReactCSSTransitionGroup>
+                  </div>
                 <div>
                   {this.state.inputting ? 
                     <div style={{display:'flex', justifyContent:'center'}} >
-                      <textarea
-                        autoFocus
-                        className="todo-name-setter"
+                      <TodoInput
+                        af={true}
                         id="input"
                         maxLength={30}
                         ref={(c) => this._input = c}
                         value={this.state.input}
-                        onChange={this.onChange}
                         placeholder="add todo"
-                        style={{color: colors.color.basegrey, textAlign: "center"}}
+                        update={this.handleNameUpdate.bind(this)} 
+                        onKeyDown={this.onKeyDown}
                       />
                     </div>
-                      : <GoPlus size={30} color={colors.color.baseblue} onClick={this.newTodo}/>}
+                      : <GoPlus size={30} color={colors.color.basered} onClick={this.newTodo}/>}
                     </div>
                   </div>
                 </div>

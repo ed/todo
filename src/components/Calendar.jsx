@@ -104,8 +104,8 @@ export default class Calendar extends Component {
           </tbody>
         </table>
         <div style={{float:'left'}}>
-          <select onChange={(e) => this.onSelect(e)} value={this.state.time}>
-            {this.time.map(t => <option key={t} value={t}>{t}</option>)}
+          <select id="timeSelect" onChange={(e) => this.onSelect(e)} value={this.state.time}>
+            {this.time.map(t => <option id={t} key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div style={{float:'right'}}>

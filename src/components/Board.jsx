@@ -29,18 +29,26 @@ export default class Board extends Component {
   };
 
   render() {
-    const { canDrop, isOver, connectDropTarget, cards, onClick,edit } = this.props;
+    const { canDrop, isOver, connectDropTarget, cards, ...props} = this.props;
     const isActive = canDrop && isOver;
     return connectDropTarget(
       <div className="card">
-        <Infinite containerHeight={350} elementHeight={40} >
-          <ul>
+        <Infinite containerHeight={350} elementHeight={30} >
             {cards.map(c => 
-              <li key={c.id} id={c.id} onClick={(e) => onClick(e)} style={{cursor: '-webkit-grab'}}>
-                <Card id={c.id} text= {isInWeek(c.date) ? `${c.time} ${c.name}` : `${c.name}${c.tags ? `#${c.tags.toUpperCase()}` : ''} ${outOfWeek(c.date)} ${c.time}`} prio={c.prio} update={edit} done={c.done} />
-              </li>
+                <Card 
+                  id={c.id} 
+                  text= {isInWeek(c.date) ? `${c.time} ` : `${c.tags ? `#${c.tags.toUpperCase()}` : ''} ${outOfWeek(c.date)} ${c.time}`} 
+                  prio={c.prio} 
+                  done={c.done} 
+                  name={c.name} 
+                  updateName={props.updateName}
+                  update={props.edit}
+                  chosen={props.chosen}
+                  onClick={props.onClick}
+                  actions={props.actions}
+                  ro={props.ro}
+                />
             )}
-          </ul>
         </Infinite>
       </div>
     );

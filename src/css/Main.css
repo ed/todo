@@ -23,9 +23,9 @@ textarea {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-family: 'Roboto', sans-serif;
-	font-size: 18px;
+	font-size: 16px;
+	padding: .5em .75em;
 	transition-duration: 1s;
-	height: 25px;
 	color: #565656;
 }
 
@@ -76,7 +76,7 @@ textarea:focus {
 
 .todo-trans-enter.todo-trans-enter-active {
 	opacity: 1;
-	transition: opacity 200ms ease-in-out;
+	transition: opacity 500ms ease-in-out;
 }
 
 .todo-trans-leave {
@@ -85,22 +85,22 @@ textarea:focus {
 
 .todo-trans-leave.todo-trans-leave-active {
 	opacity: 0.01;
-	transition: opacity 200ms ease-in-out;
+	transition: opacity 500ms ease-in-out;
 }
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-	color:    #CCDDEE;
+	color:    #565656;
 }
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-	color:    #CCDDEE;
+	color:    #565656;
 	opacity:  1;
 }
 ::-moz-placeholder { /* Mozilla Firefox 19+ */
-	color:    #CCDDEE;
+	color:    #565656;
 	opacity:  1;
 }
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
-	color:    #CCDDEE;
+	color:    #565656;
 }
 
 .card-container {
@@ -112,8 +112,8 @@ textarea:focus {
 	box-shadow: 4px 8px 10px 0 #565656;
 	transition: 0.3s;
 	border-radius: 10px; /* 5px rounded corners */
-	width: 350px;
-	height: 350px;
+	width: 450px;
+	height: 550px;
 	padding: 5px;
 	margin: 5px;
 	white-space: nowrap;
@@ -134,10 +134,19 @@ textarea:focus {
 
 .edits {
 	display: flex;
-	background: #FFBA77;
-	border-radius: 25px;
 	justify-content: center;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
+
+*.unselectable {
+	cursor: default;
+   -webkit-user-select: none;
+   -webkit-touch-callout: none;
+   -khtml-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   -o-user-select: none;
+   user-select: none;
+    }  
 

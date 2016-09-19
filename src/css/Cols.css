@@ -24,9 +24,8 @@
   flex: none !important;
 }
 
-.u-15p {
-  width: 15% !important;
-  flex: none !important;
+.u-10p {
+  width: 10% !important;
 }
 
 .u-3of4 {
@@ -114,3 +113,40 @@
     flex: none !important;
   }
 }
+
+.InputAddOn {
+  display: flex;
+  margin-bottom: 0.5em;
+}
+
+.InputAddOn-field {
+  flex: 1;
+}
+.InputAddOn-field:not(:first-child) {
+  border-left: 0;
+}
+.InputAddOn-field:not(:last-child) {
+  border-right: 0;
+}
+
+.InputAddOn-item {
+  color: #666666;
+  font: inherit;
+  font-weight: normal;
+}
+
+.InputAddOn-field,
+.InputAddOn-item {
+  border: 0px solid rgba(147, 128, 108, 0.25);
+  padding: 0.5em 0.75em;
+}
+.InputAddOn-field:first-child,
+.InputAddOn-item:first-child {
+  border-radius: 2px 0 0 2px;
+}
+.InputAddOn-field:last-child,
+.InputAddOn-item:last-child {
+  border-radius: 0 2px 2px 0;
+}
+
+

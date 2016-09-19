@@ -19,6 +19,7 @@ export default class TodoInput extends React.Component {
         };
         this.props.actions.editTodo(this.props.id, temp);
         this.setState({name: e.target.value.trim()});
+        this.props.update ? this.props.update(e.target.value.trim()) : null;
       }
     }
   }
@@ -33,12 +34,17 @@ export default class TodoInput extends React.Component {
     return (
       <textarea
         readOnly={ro}
+        autoFocus={this.props.af ? this.props.af : false}
+        className="unselectable"
+        unselectable={this.props.us ? this.props.us : 'off'}
         style={{
           textDecoration: d,
             color: c,
-            textAlign: "center"}}
+            background: 'transparent',
+        }}
             key={k}
             id={id}
+            placeholder={this.props.placeholder}
             onClick={onClick}
             onChange={this.handleChange}
             onKeyDown={(e) => this.onKeyDown(e)}

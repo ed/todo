@@ -6,7 +6,7 @@ module.exports = {
     return moment(t, ['h:mm A']).format('HH:mm');
   },
 
-  agenda: function () {
+  agenda() {
     let startOfWeek = moment().startOf('week');
     let endOfWeek = moment().endOf('week');
     let days = [];
@@ -31,11 +31,15 @@ module.exports = {
     return currentWeek.includes(moment(d));
   },
 
+  getDayName(d) {
+    return moment(d, 'MM-DD-YY').format('dddd')
+  },
+
   compare(a,b) {
     return moment(a).diff(moment(b));
   },
 
-  createTimeInterval: function() {
+  createTimeInterval() {
     let time = ['',"12:00am", "12:30am"]
     for (var i = 1 ; i < 12; i++) {
       time.push(i+":00am")
