@@ -6,8 +6,6 @@ export default class TodoInput extends React.Component {
     super(props);
     this.state = {
       name: this.props.name || '',
-      tags: '',
-      content: '',
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -33,7 +31,7 @@ export default class TodoInput extends React.Component {
   }
 
   handleChange(e) {
-    this.setState({ [e.target.id] : e.target.value });
+    this.setState({ name : e.target.value });
   }
 
   render() {
