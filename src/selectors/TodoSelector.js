@@ -3,13 +3,21 @@ import { isInWeek, tttf, compare } from '../utils/TimeUtils'
 
 
 const date = (state, props) => props.date;
-const status = (state, props) => props.id;
+const status = (state, props) => props.card;
 const val = (state, props) => props.val.val;
 const fil = (state, props) => props.val.filter;
 
+const kanban = createSelector(
+  state => state,
+  status,
+  (sorted,card) => { 
+    return sorted.filter(todo => todo.card === card)
+  }
+);
+
 
 const filter = createSelector(
-  state => state,
+  kanban,
   val,
   fil,
   (s,v,f) => s.filter(todo => f ? todo[f] === v : todo)
@@ -20,9 +28,9 @@ const dateFilter = createSelector(
   date,
   (todos, day) => {
     switch (day) {
-    case '':
+      case '':
         return todos.filter(todo => todo.date === day || !isInWeek(todo.date))
-    default:
+      default:
         return todos.filter(todo => todo.date === day)
     }
   }
@@ -33,26 +41,10 @@ const dateSort = createSelector(
   (date) => date.sortBy(todo => todo.date)
 )
 
-const timeSort = createSelector(
-  dateSort,
-  (date) => date.sort((a,b) => tttf(a.time).localeCompare(tttf(b.time)))
-);
-
-const allTogetherNow = () => { 
+const timeSort = () => { 
   return createSelector(
-    timeSort,
-    status,
-    (sorted, done) => {
-      switch (done) {
-        case 0:
-          return sorted.filter(todo => todo.done === 0)
-        case 1:
-          return sorted.filter(todo => todo.done === 1)
-        case 2:
-          return sorted.filter(todo => todo.done === 2)
-        default:
-          return sorted
-      }
-    })};
+    dateSort,
+    (date) => date.sort((a,b) => tttf(a.time).localeCompare(tttf(b.time))) 
+  )};
 
-export default allTogetherNow
+export default timeSort

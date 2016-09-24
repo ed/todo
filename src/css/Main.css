@@ -20,6 +20,7 @@ textarea {
 	border: none;
 	outline: none;
 	width: 100%;
+	background: transparent;
 	white-space: pre-line;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -152,4 +153,10 @@ textarea:focus {
    -o-user-select: none;
    user-select: none;
     }  
+
+button {
+	border: none;
+	outline: none;
+	background: transparent;
+}
 

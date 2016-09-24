@@ -11,8 +11,7 @@ import TodoInput from './TodoInput'
    */
 const cardSource = {
   beginDrag(props) {
-    console.log(props)
-    props.update(props.id);
+    props.edit(props.id);
     return {
       id: props.id,
       done: props.done
@@ -21,7 +20,7 @@ const cardSource = {
 
   isDragging(props, monitor) {
     return props.id === monitor.getItem().id;
-  }
+  },
 };
 
 @DragSource(CARD, cardSource, (connect, monitor) => ({
@@ -53,7 +52,7 @@ export default class Card extends React.Component {
           id={props.id}
           done={props.done}
           update={props.updateName} 
-          onClick={(e) => props.onClick(e)}
+          onClick={props.onClick}
           name={props.name}
           actions={props.actions}
         />

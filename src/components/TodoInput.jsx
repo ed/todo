@@ -6,6 +6,8 @@ export default class TodoInput extends React.Component {
     super(props);
     this.state = {
       name: this.props.name || '',
+      tags: '',
+      content: '',
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -16,16 +18,22 @@ export default class TodoInput extends React.Component {
       if (e.target.value) {
         const temp = {
           name: e.target.value.trim(),
+          card: this.props.card,
+          date: this.props.date
         };
-        this.props.actions.editTodo(this.props.id, temp);
-        this.setState({name: e.target.value.trim()});
-        this.props.update ? this.props.update(e.target.value.trim()) : null;
+        if (this.props.id == 'input') {
+          this.props.actions.addTask(temp, 'todo');
+          this.setState({name: ''});
+        }
+        else {
+          this.props.update ? this.props.update(e.target.value.trim()) : null;
+        }
       }
     }
   }
 
   handleChange(e) {
-    this.setState({ name: e.target.value });
+    this.setState({ [e.target.id] : e.target.value });
   }
 
   render() {
@@ -42,14 +50,15 @@ export default class TodoInput extends React.Component {
             color: c,
             background: 'transparent',
         }}
-            key={k}
-            id={id}
-            placeholder={this.props.placeholder}
-            onClick={onClick}
-            onChange={this.handleChange}
-            onKeyDown={(e) => this.onKeyDown(e)}
-            value={this.state.name}
-          />
+        maxLength={this.props.maxLength ? this.props.maxLength : null}
+        key={k}
+        id={id}
+        placeholder={this.props.placeholder}
+        onClick={onClick}
+        onChange={this.handleChange}
+        onKeyDown={this.props.onKeyDown ? this.props.onKeyDown : (e) => this.onKeyDown(e)}
+        value={this.state.name}
+      />
     )
   }
 }

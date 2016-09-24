@@ -9,39 +9,38 @@ const Immutable = require('immutable');
 export default class Calendar extends Component {
   constructor(props) {
     super(props);
+    const currentDate = moment(this.props.date ? this.props.date : '')
     this.state = {
-      formatted: moment().format('MM-DD-YY'),
-      dateid: `${moment().dayOfYear()}${moment().year()}`,
+      formatted: currentDate.format('MM-DD-YY'),
+      dateid: `${currentDate.dayOfYear()}${currentDate.year()}`,
       time: '',
       month: moment().month(),
       year: moment().year(),
     };
     this.onClick = this.onClick.bind(this);
     this.onSelect = this.onSelect.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
     this.prevMonth = this.prevMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
     this.renderDates(moment());
     this.renderTime();
   }
 
-  onSubmit(e) {
-    this.props.update(this.state.formatted, this.state.time);
-  }
-
   onClick(e) {
     e.preventDefault();
     const year = e.target.id.slice(-4);
     const day = e.target.id.slice(0, -4);
+    const formatted = moment().set('year', year).dayOfYear(day).format('MM-DD-YY')
     this.setState({
       dateid: e.target.id,
-      formatted: moment().set('year', year).dayOfYear(day).format('MM-DD-YY'),
+      formatted: formatted,
     });
+    this.props.update(formatted, this.state.time);
   }
 
   onSelect(e) {
     e.preventDefault();
     this.setState({ time: e.target.value });
+    this.props.update(this.state.formatted, e.target.value);
   }
 
   renderDates(date) {
@@ -103,13 +102,10 @@ export default class Calendar extends Component {
             )}
           </tbody>
         </table>
-        <div style={{float:'left'}}>
-          <select id="timeSelect" onChange={(e) => this.onSelect(e)} value={this.state.time}>
+        <div style={{textAlign:'center'}}>
+          <select id="timeSelect" onChange={(e) => this.onSelect(e)} value={this.state.time ? this.state.time : this.props.time}>
             {this.time.map(t => <option id={t} key={t} value={t}>{t}</option>)}
           </select>
-        </div>
-        <div style={{float:'right'}}>
-          <button value="submit" onClick={this.onSubmit}>{'submit'}</button>
         </div>
       </div>
     );
@@ -121,7 +117,7 @@ const Day = (props) =>
   <td
     id={props.id}
     key={props.k}
-    style={props.chosen ? { background: colors.color.lightgrey } : { background: 'white', color: colors.color.blue }}
+    style={props.chosen ? { background: colors.color.basegrey} : { background: colors.color.basewhite, color: colors.color.baseblue }}
     onClick={props.onClick}
   >
     {props.value}

@@ -5,7 +5,11 @@ export const load = () => {
     const serialized = localStorage.getItem('state');
     if (serialized === null)
       return undefined;
-    return Immutable.Map(JSON.parse(serialized))
+    const load = JSON.parse(serialized)
+    return {
+      tasks: Immutable.Map(load.tasks),
+      cards: Immutable.OrderedMap(load.cards)
+    }
   } catch(err) {
     return undefined;
   }
@@ -13,7 +17,11 @@ export const load = () => {
 
 export const save = (state) => {
   try {
-    const serialized = JSON.stringify(state.toJS());
+    const save = {
+      tasks: state.tasks.toJS(),
+      cards: state.cards.toJS(),
+    }
+    const serialized = JSON.stringify(save);
     localStorage.setItem('state', serialized)
   } catch(err) {
     console.log(err)

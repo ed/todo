@@ -1,20 +1,28 @@
 import { connect } from 'react-redux'
 import Board from '../components/Board'
-import allTogetherNow from '../selectors/TodoSelector'
+import * as actions from '../actions/actions';
+import timeSort from '../selectors/TodoSelector'
+import { bindActionCreators } from 'redux';
 
 const makeMapStateToProps = () => {
-  const ATN = allTogetherNow()
+  const ATN = timeSort()
   const mapStateToProps = (state, props) => {
+    const { tasks } = state;
     return {
-      cards: ATN(state, props)
+      tasks: ATN(tasks, props),
     }
   }
   return mapStateToProps
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(actions, dispatch),
+  }
+};
 
-const Boards = connect(
+
+export default connect(
   makeMapStateToProps,
+  mapDispatchToProps
 )(Board)
-
-export default Boards 

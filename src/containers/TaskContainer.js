@@ -1,16 +1,20 @@
 import { connect } from 'react-redux';
-import * as TaskActions from '../actions/TaskActions';
+import * as actions from '../actions/actions';
 import Todo from '../components/Todo';
 import { bindActionCreators } from 'redux';
 
 
 const mapStateToProps = (state) => {
-  return { tasks: state }
+  const { tasks, cards } = state
+  return { 
+    tasks: tasks,
+    cards: cards,
+  }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(TaskActions, dispatch)
+    actions: bindActionCreators(actions, dispatch)
   }
 };
 

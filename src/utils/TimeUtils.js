@@ -28,7 +28,11 @@ module.exports = {
 
   isInWeek(d) {
     const currentWeek = module.exports.agenda()
-    return currentWeek.includes(moment(d));
+    const date = moment(d, 'MM-DD-YY').format('MM-DD-YY')
+    if (date == 'Invalid date')
+      return false;
+    else 
+      return currentWeek.includes(moment(d, 'MM-DD-YY').format('MM-DD-YY'))
   },
 
   getDayName(d) {

@@ -47,7 +47,7 @@ module.exports = {
   createEdits() {
     const arr = [];
     const s = [
-      'tags',
+      'tags', 'content'
     ];
     s.forEach(i => arr.push({
       cname: `todo-${module.exports.hyphenate(i)}-setter`,
