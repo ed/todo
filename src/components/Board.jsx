@@ -46,7 +46,8 @@ export default class Board extends Component {
           {tasks.map(c => 
             <Card 
               id={c.id} 
-              text= {isInWeek(c.date) ? `${c.tags ? `#${c.tags.toUpperCase()} ${c.time} ` : c.time }` : `${c.tags ? `#${c.tags.toUpperCase()}` : ''} ${outOfWeek(c.date)} ${c.time ? c.time : ''}`} 
+              text= {isInWeek(c.date) ? 
+                `${c.tags ? `#${c.tags.toUpperCase()}` : ''} ${c.time ? c.time : ''}` : `${c.tags ? `#${c.tags.toUpperCase()}` : ''} ${outOfWeek(c.date)} ${c.time ? c.time : ''}`} 
               prio={c.prio} 
               done={c.done} 
               name={c.name} 
