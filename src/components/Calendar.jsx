@@ -117,7 +117,7 @@ const Day = (props) =>
   <td
     id={props.id}
     key={props.k}
-    style={props.chosen ? { background: colors.color.basegrey} : { background: colors.color.basewhite, color: colors.color.baseblue }}
+    style={props.chosen ? { background: colors.color.lightgrey} : { background: colors.color.basewhite, color: colors.color.baseblue }}
     onClick={props.onClick}
   >
     {props.value}
