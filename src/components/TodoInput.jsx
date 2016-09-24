@@ -13,17 +13,22 @@ export default class TodoInput extends React.Component {
   onKeyDown(e) {
     if (e.keyCode === 13) {
       e.preventDefault();
+      let temp = {}
       if (e.target.value) {
-        const temp = {
-          name: e.target.value.trim(),
-          card: this.props.card,
-          date: this.props.date
-        };
         if (this.props.id == 'input') {
+          temp = {
+            name: e.target.value.trim(),
+            card: this.props.card,
+            date: this.props.date
+          };
           this.props.actions.addTask(temp, 'todo');
           this.setState({name: ''});
         }
         else {
+          temp = {
+            name: e.target.value.trim(),
+          };
+          this.props.actions.editTodo(this.props.id, temp);
           this.props.update ? this.props.update(e.target.value.trim()) : null;
         }
       }
